@@ -1,0 +1,27 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: SEWorld-Mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=simo-macca
+      - MONGO_INITDB_ROOT_PASSWORD=Macauth.real
+      - MONGO_INITDB_DATABASE=SEWorld_backend
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: SEWorld-Backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://simo-macca:Macauth.real@mongodb:27017/SEWorld_backend?authSource=admin
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo_data:
