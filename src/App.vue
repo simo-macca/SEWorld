@@ -1,10 +1,11 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { BImg } from 'bootstrap-vue-next'
+import ThemeToggle from '@/components/ThemeToggleComponent.vue'
 </script>
 
 <template>
-  <header class="container-fluid">
+  <header class="container-fluid border-bottom border-4 rounded-bottom mb-3">
       <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
           <RouterLink class="navbar-brand" to="/">SEWorld</RouterLink>
@@ -28,9 +29,8 @@ import { BImg } from 'bootstrap-vue-next'
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <b-img src="/src/assets/logo.svg" rounded="circle" alt="Circle image" class="bg-primary" width="50px" height="50px"></b-img>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" style="left: -80px;">
                   <li><RouterLink class="dropdown-item" to="/profile">Profile</RouterLink></li>
-                  <!-- <li><RouterLink class="dropdown-item" to="/profle"></RouterLink></li> -->
                   <li><hr class="dropdown-divider"></li>
                   <li><RouterLink class="dropdown-item" to="/">Log out</RouterLink></li>
                 </ul>
@@ -41,6 +41,6 @@ import { BImg } from 'bootstrap-vue-next'
       </nav>
   </header>
 
-
-  <RouterView />
+  <RouterView class="container-fluid ps-2" />
+  <ThemeToggle />
 </template>

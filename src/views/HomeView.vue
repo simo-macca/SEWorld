@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main style="background-color: aqua; color: black;">
+  <main>
     <h1>HOME</h1>
   </main>
 </template>

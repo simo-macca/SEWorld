@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main style="background-color: rebeccapurple; color: wheat;">
+  <main>
     <h1>ABOUT</h1>
   </main>
 </template>

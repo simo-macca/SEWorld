@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-// import {useNavStore} from "@/stores/navigation.js";
+// import { useNavStore } from "@/stores/navigation.js";
 
 // Global Styles
 import '@/assets/main.css';
@@ -26,5 +26,10 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(createBootstrap());
 app.use(router)
+
+import('@/stores/isDark').then(({ useThemeStore }) => {
+  const theme = useThemeStore(pinia)
+  theme.init()
+})
 
 app.mount('#app')

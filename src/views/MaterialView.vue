@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <main style="background-color: violet; color: lawngreen;">
+  <main>
     <h1>MATERIAL</h1>
   </main>
 </template>
