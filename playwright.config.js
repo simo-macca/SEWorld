@@ -64,7 +64,7 @@ export default defineConfig({
       },
     },
 
-    /* Test against mobile viewports. */
+    /* Test against collapse viewports. */
     // {
     //   name: 'Mobile Chrome',
     //   use: {

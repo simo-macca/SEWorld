@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useThemeStore = defineStore('theme', {
   state: () => ({
-    isDark: localStorage.getItem('theme') === 'dark'
+    isDark: localStorage.getItem('theme') === 'dark',
   }),
 
   actions: {
@@ -19,6 +19,6 @@ export const useThemeStore = defineStore('theme', {
 
     init() {
       this.applyTheme()
-    }
-  }
+    },
+  },
 })
