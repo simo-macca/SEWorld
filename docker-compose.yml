@@ -1,27 +1,70 @@
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: SEWorld-Mongo
-    ports:
-      - "27017:27017"
+  postgres:
+    image: postgres:17
+    container_name: SEWorld-Postgres
+    restart: always
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=simo-macca
-      - MONGO_INITDB_ROOT_PASSWORD=Macauth.real
-      - MONGO_INITDB_DATABASE=SEWorld_backend
+      POSTGRES_DB: SEWorld
+      POSTGRES_USER: simo_macca
+      POSTGRES_PASSWORD: Macauth.real
+    ports:
+      - "5432:5432"
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama
+    container_name: SEWorld-Ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+      "
+      # Start Ollama server
+      ollama serve &
+      
+      # Wait for server to start
+      sleep 10
+      
+      # Show available models in registry
+      echo 'AVAILABLE MODELS IN REGISTRY:'
+      ollama list | grep -i deepseek
+      
+      # Check if deepseek-llm is already pulled
+      if ollama list | grep -q 'deepseek-llm'; then
+      echo 'Model deepseek-llm is already available locally'
+      else
+      echo 'Model deepseek-llm not found locally, attempting to pull...'
+      ollama pull deepseek-llm || echo 'Failed to pull deepseek-llm'
+      fi
+      
+      # List all successfully pulled models
+      echo 'Available local models:'
+      ollama list
+      
+      # Keep container running
+      wait
+      "
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: SEWorld-Backend
+    depends_on:
+      - postgres
+      - ollama
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/SEWorld
+      SPRING_DATASOURCE_USERNAME: simo_macca
+      SPRING_DATASOURCE_PASSWORD: Macauth.real
+      SPRING_AI_OLLAMA_BASE-URL: http://ollama:11434
     ports:
       - "8080:8080"
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://simo-macca:Macauth.real@mongodb:27017/SEWorld_backend?authSource=admin
-    depends_on:
-      - mongodb
 
 volumes:
-  mongo_data:
+  postgres_data:
+  ollama_data:
