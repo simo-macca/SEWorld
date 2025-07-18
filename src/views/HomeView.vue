@@ -40,13 +40,13 @@
 
     <div class="content">
       <h1 class="wave-text">
-        <span>W</span><span>e</span><span>l</span><span>c</span><span>o</span><span>m</span
+        <span>W</span><span>e</span><span>l</span><span>c</span><span>material</span><span>m</span
         ><span>e</span>
         <span>&nbsp;</span>
-        <span>t</span><span>o</span>
+        <span>t</span><span>material</span>
         <span>&nbsp;</span>
-        <span class="highlight">S</span><span class="highlight">E</span><span>W</span><span>o</span
-        ><span>r</span><span>l</span><span>d</span>
+        <span class="highlight">S</span><span class="highlight">E</span><span>W</span
+        ><span>material</span><span>r</span><span>l</span><span>d</span>
       </h1>
       <p class="subtext">
         Log in to dive into the learning experience of

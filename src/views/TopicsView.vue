@@ -84,22 +84,22 @@ const obj = [
   <main>
     <SearchBar v-if="collapse.isCollapse" class="mobile" />
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col" v-for="(o, index) in obj" :key="index" style="min-width: 20em">
-        <b-card :header="o.title" class="mb-3">
+      <div class="col" v-for="(topic, index) in obj" :key="index" style="min-width: 20em">
+        <b-card :header="topic.title" class="mb-3">
           <b-card-text class="m-3" style="min-height: 15em; max-height: 15em; overflow: auto">
-            {{ o.description }}
+            {{ topic.description }}
           </b-card-text>
 
           <b-progress
-            :value="o.progress"
+            :value="topic.progress"
             max="100"
             animated
             striped
             show-progress
             :variant="
-              parseInt(o.progress) < 60
+              parseInt(topic.progress) < 60
                 ? 'danger'
-                : parseInt(o.progress) >= 80
+                : parseInt(topic.progress) >= 80
                   ? 'success'
                   : 'warning'
             "
