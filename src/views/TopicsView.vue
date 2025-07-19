@@ -1,11 +1,38 @@
 <script setup>
-import { BButton, BCard, BCardText, BProgress } from 'bootstrap-vue-next'
-import { useThemeStore } from '@/stores/isDark'
+// Imports
+// Vue APIs
+import { useRouter } from 'vue-router'
+
+// Components
 import SearchBar from '@/components/SearchBar.vue'
+import { BButton, BCard, BCardText, BProgress } from 'bootstrap-vue-next'
+
+// Stores
+import { useThemeStore } from '@/stores/isDark'
 import { useCollapseStore } from '@/stores/isCollapse.js'
+import { useTopicsStore } from '@/stores/topicsStore.js'
+
+// Store & Plugin Initialization
 const theme = useThemeStore()
 const collapse = useCollapseStore()
+const topicsStore = useTopicsStore()
 
+// Router & Toast
+const router = useRouter()
+
+// Navigation Functions
+function goToMaterial(did) {
+  topicsStore.select(did)
+  router.push({ name: 'Material' })
+}
+
+// Handles exercise navigation and shows all toast types for demonstration
+function goToExercise(did) {
+  topicsStore.select(did)
+  router.push({ name: 'Exercises' })
+}
+
+// Static Data for Display
 const obj = [
   {
     title: 'JavaScript Fundamentals',
@@ -107,10 +134,16 @@ const obj = [
           />
           <template #footer>
             <div class="text-end">
-              <b-button class="me-2" :variant="theme.isDark ? 'outline-info' : 'info'"
+              <b-button
+                @click="goToExercise(topic.title)"
+                class="me-2"
+                :variant="theme.isDark ? 'outline-info' : 'info'"
                 >Exercise</b-button
               >
-              <b-button class="me-2" :variant="theme.isDark ? 'outline-info' : 'info'"
+              <b-button
+                @click="goToMaterial(topic.title)"
+                class="me-2"
+                :variant="theme.isDark ? 'outline-info' : 'info'"
                 >Material</b-button
               >
             </div>

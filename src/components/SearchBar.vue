@@ -1,7 +1,10 @@
 <script setup>
+// Imports
 import { BFormInput, BInputGroup, BNavForm } from 'bootstrap-vue-next'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useThemeStore } from '@/stores/isDark.js'
+
+// Component state
 const collapse = useCollapseStore()
 const theme = useThemeStore()
 </script>

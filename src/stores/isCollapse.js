@@ -1,4 +1,3 @@
-// src/stores/collapse.js
 import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { computed } from 'vue'

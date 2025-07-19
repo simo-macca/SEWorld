@@ -1,15 +1,17 @@
 import { fileURLToPath, URL } from 'node:url'
-
 import { defineConfig } from 'vite'
+
+// Vue and related plugins
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
+
+// Auto-import and components
+import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import Icons from 'unplugin-icons/vite'
-import IconsResolve from 'unplugin-icons/resolver'
-import AutoImport from 'unplugin-auto-import/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -22,11 +24,10 @@ export default defineConfig({
     }),
 
     Components({
-      resolvers: [IconsResolve()],
+      resolvers: [IconsResolver()],
       dts: 'src/components.d.ts',
     }),
 
-    // Iconi importabili come componenti Vue <i-carbon-add />
     Icons({
       compiler: 'vue3',
       autoInstall: true,
@@ -42,7 +43,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080/',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       },

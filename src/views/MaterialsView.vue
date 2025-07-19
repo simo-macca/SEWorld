@@ -1,12 +1,22 @@
 <script setup>
+// Imports
+import { computed } from 'vue'
 import SearchBar from '@/components/SearchBar.vue'
-import { useCollapseStore } from '@/stores/isCollapse.js'
-
 import { BCard, BCardTitle } from 'bootstrap-vue-next'
 import { FileText, UserRound, ExternalLink, Download, File } from 'lucide-vue-next'
+import { useCollapseStore } from '@/stores/isCollapse.js'
+import { useTopicsStore } from '@/stores/topicsStore.js'
 
+// Stores & Reactive State
 const collapse = useCollapseStore()
+const topic = useTopicsStore()
 
+// Computed Properties
+const topicName = computed(() => {
+  return topic.currentDid ? `for : ${topic.currentDid}` : ''
+})
+
+// Static Data
 const materials = [
   {
     id: 1,
@@ -84,48 +94,47 @@ Cras tempor, mi vel dapibus molestie, eros mauris tempus nisl, ut convallis ex j
   },
 ]
 
+// Icon & Style Configuration
 const iconMap = {
   markdown: FileText,
   link: ExternalLink,
   file: Download,
 }
-
 const iconClass = {
   markdown: 'bg-primary-subtle',
   file: 'bg-success-subtle',
   link: 'bg-danger-subtle',
 }
-
 const iconColor = {
   markdown: 'rgb(0, 78, 255)',
   file: 'rgb(80, 164, 59)',
   link: 'rgb(255, 51, 66)',
 }
-
 const typeClass = {
   markdown: 'bg-primary-subtle text-primary-emphasis',
   file: 'bg-success-subtle text-success-emphasis',
   link: 'bg-danger-subtle text-danger-emphasis',
 }
 
-const getIconComponent = (type) => {
+// Utility Functions
+function getIconComponent(type) {
   const comp = iconMap[type.toLowerCase()]
   return comp || File
 }
 
-const getIconClass = (type) => {
-  const comp = iconClass[type.toLowerCase()]
-  return comp || 'bg-secondary-subtle'
+function getIconClass(type) {
+  const cls = iconClass[type.toLowerCase()]
+  return cls || 'bg-secondary-subtle'
 }
 
-const getIconColor = (type) => {
-  const comp = iconColor[type.toLowerCase()]
-  return comp || 'rgba(134, 134, 134)'
+function getIconColor(type) {
+  const color = iconColor[type.toLowerCase()]
+  return color || 'rgba(134, 134, 134)'
 }
 
-const getTypeClass = (type) => {
-  const comp = typeClass[type.toLowerCase()]
-  return comp || 'bg-secondary-subtle text-secondary-emphasis'
+function getTypeClass(type) {
+  const cls = typeClass[type.toLowerCase()]
+  return cls || 'bg-secondary-subtle text-secondary-emphasis'
 }
 </script>
 
@@ -133,41 +142,37 @@ const getTypeClass = (type) => {
   <main>
     <SearchBar v-if="collapse.isCollapse" class="mobile" />
     <div class="container-fluid">
-      <h1 class="mt-4">Test Markdown Preview</h1>
-      <div class="">
-        <div class="col" v-for="obj in materials" :key="obj.id" style="min-width: 20em">
-          <b-card header-bg-variant="transparent" class="mb-4 shadow rounded">
-            <template #header>
-              <div class="d-flex align-items-center justify-content-start column-gap-3">
-                <component
-                  :is="getIconComponent(obj.type)"
-                  :size="30"
-                  :color="getIconColor(obj.type)"
-                  :class="[getIconClass(obj.type), 'rounded', 'p-1']"
-                />
-                <span
-                  :class="`${getTypeClass(obj.type)} rounded-pill p-2 pe-4 ps-4 text-capitalize`"
-                  >{{ obj.type }}</span
-                >
-              </div>
-            </template>
-            <b-card-title>
-              {{ obj.title }}
-            </b-card-title>
-            <MaterialComponent :material="obj" />
-            <template #footer>
-              <div
-                class="d-flex align-items-center justify-content-between text-secondary-emphasis"
+      <h1 class="mt-4 mb-4">Materials {{ topicName }}</h1>
+      <div class="col" v-for="obj in materials" :key="obj.id" style="min-width: 20em">
+        <b-card header-bg-variant="transparent" class="mb-4 shadow rounded">
+          <template #header>
+            <div class="d-flex align-items-center justify-content-start column-gap-3">
+              <component
+                :is="getIconComponent(obj.type)"
+                :size="30"
+                :color="getIconColor(obj.type)"
+                :class="[getIconClass(obj.type), 'rounded', 'p-1']"
+              />
+              <span
+                :class="`${getTypeClass(obj.type)} rounded-pill p-2 pe-4 ps-4 text-capitalize`"
+                >{{ obj.type }}</span
               >
-                <div class="flex flex-wrap gap-1">
-                  <UserRound />
-                  {{ obj.author }}
-                </div>
-                <span>{{ obj.date }}</span>
+            </div>
+          </template>
+          <b-card-title>
+            {{ obj.title }}
+          </b-card-title>
+          <MaterialComponent :material="obj" />
+          <template #footer>
+            <div class="d-flex align-items-center justify-content-between text-secondary-emphasis">
+              <div class="flex flex-wrap gap-1">
+                <UserRound />
+                {{ obj.author }}
               </div>
-            </template>
-          </b-card>
-        </div>
+              <span>{{ obj.date }}</span>
+            </div>
+          </template>
+        </b-card>
       </div>
     </div>
   </main>

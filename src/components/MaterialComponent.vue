@@ -1,9 +1,12 @@
 <script setup>
+// Imports
+import { ref } from 'vue'
 import { BButton, BCardText } from 'bootstrap-vue-next'
 import { useThemeStore } from '@/stores/isDark.js'
 import { MdPreview } from 'md-editor-v3'
 import { Download, ExternalLink } from 'lucide-vue-next'
-import { ref } from 'vue'
+
+// Props definition
 const props = defineProps({
   material: {
     type: Object,
@@ -11,37 +14,38 @@ const props = defineProps({
   },
 })
 
+// Component state
 const open = ref(false)
-
 const theme = useThemeStore()
 
+// File download handler
 async function download() {
   try {
-    // 1. Determine the file URL and filename
+    // 1. Extract URL and filename
     const fileUrl = props.material['content']
     const filename = fileUrl.split('/').pop()
 
-    // 2. Fetch the file resource
+    // 2. Fetch the file (CORS)
     const response = await fetch(fileUrl, { mode: 'cors' })
     if (!response.ok) {
       console.error(`Download failed: HTTP ${response.status}`)
       return
     }
 
-    // 3. Read the response as a Blob
+    // 3. Convert response to Blob
     const fileBlob = await response.blob()
 
-    // 4. Create a temporary object URL for the Blob
+    // 4. Create a temporary URL for the Blob
     const blobUrl = URL.createObjectURL(fileBlob)
 
-    // 5. Create a hidden anchor element and trigger a click to download
+    // 5. Trigger download via anchor element
     const anchor = document.createElement('a')
     anchor.href = blobUrl
     anchor.download = filename
     document.body.appendChild(anchor)
     anchor.click()
 
-    // 6. Clean up: remove the anchor and revoke the object URL
+    // 6. Cleanup resources
     document.body.removeChild(anchor)
     URL.revokeObjectURL(blobUrl)
 

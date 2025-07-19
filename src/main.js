@@ -1,34 +1,65 @@
-import { createApp } from 'vue'
+import { createApp, h } from 'vue'
 import { createPinia } from 'pinia'
 
+// Core components
 import App from './App.vue'
 import router from './router'
-// import { useNavStore } from "@/stores/navigation.js";
 
-// Bootstrap styles
+// Stores
+import { useThemeStore } from '@/stores/isDark.js'
+//import { useNavStore } from '@/stores/navigation.js'
+
+// Styles
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
-
-// Bootstrap logic
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { createBootstrap } from 'bootstrap-vue-next'
-import { useThemeStore } from '@/stores/isDark.js'
-
-// Markdow
 import 'md-editor-v3/lib/style.css'
 import 'md-editor-v3/lib/preview.css'
-
-// Global Styles
 import '@/assets/style.css'
+
+// Bootstrap JS for components
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import { createBootstrap } from 'bootstrap-vue-next'
+
+// Toastification
+import Toast, { TYPE } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+import { Check, CircleAlert, TriangleAlert, Info, X } from 'lucide-vue-next'
 
 const app = createApp(App)
 
+// Store + Pinia
 const pinia = createPinia()
 app.use(pinia)
-app.use(createBootstrap())
-app.use(router)
 
+// Initialize theme store
 const theme = useThemeStore(pinia)
 theme.init()
+
+// const navStore = useNavStore(pinia)
+
+// BootstrapVue plugin
+app.use(createBootstrap())
+
+// Vue Router plugin
+app.use(router)
+
+// Toastification plugin
+app.use(Toast, {
+  position: 'top-right',
+  timeout: 3000,
+  draggable: true,
+  // Custom close button using the X icon
+  closeButton: (props) => h(X, { ...props, size: 34, 'stroke-width': 3 }),
+  // Center-align toast content
+  toastClassName: 'd-flex align-items-center justify-content-center',
+  showCloseButtonOnHover: true,
+  // Default icons per toast type
+  toastDefaults: {
+    [TYPE.SUCCESS]: { icon: Check },
+    [TYPE.WARNING]: { icon: CircleAlert },
+    [TYPE.ERROR]: { icon: TriangleAlert },
+    [TYPE.INFO]: { icon: Info },
+  },
+})
 
 app.mount('#app')
