@@ -43,8 +43,8 @@ spring:
         options:
           model: deepseek-llm
           temperature: 0.3
-#  application:
-#    name: SEWorld_backend
+  application:
+    name: SEWorld_backend
 
 logging:
   level:

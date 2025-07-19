@@ -31,7 +31,7 @@ public class AbstractUserService {
     this.abstractUserRepository = abstractUserRepository;
   }
 
-  public AbstractUser createUser(Object principal) {
+  public AbstractUser createOrFindUser(Object principal) {
     Object resolved = resolvePrincipal(principal);
     Map<String, Object> attributes;
     switch (resolved) {
@@ -58,7 +58,7 @@ public class AbstractUserService {
     String name = nameObj.toString();
 
     if (abstractUserRepository.getByUserDid(did).isPresent()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User already exists");
+      return abstractUserRepository.getByUserDid(did).get();
     }
 
     return INSTRUCTOR_LIST.contains(new Pair<>(name, email))

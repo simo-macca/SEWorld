@@ -23,7 +23,7 @@ public class SecurityConfiguration {
             auth ->
                 auth.requestMatchers("/api/auth/**")
                     .authenticated()
-                    .requestMatchers("/api/public/**")
+                    .requestMatchers("/api/public/**", "/error")
                     .permitAll())
         .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl("http://localhost:3000/topics", true))
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
