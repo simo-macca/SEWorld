@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -31,6 +32,7 @@ public class AbstractUserService {
     this.abstractUserRepository = abstractUserRepository;
   }
 
+  @Transactional
   public AbstractUser createOrFindUser(Object principal) {
     Object resolved = resolvePrincipal(principal);
     Map<String, Object> attributes;

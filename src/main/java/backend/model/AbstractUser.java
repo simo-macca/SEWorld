@@ -13,16 +13,26 @@ public abstract class AbstractUser {
 
   @Id
   @GeneratedValue
-  @Column(name = "user_id")
+  @Column(name = "user_id", updatable = false, nullable = false, unique = true)
   private long userId;
 
-  @Column(name = "user_did")
+  @Column(name = "user_did", updatable = false, nullable = false, unique = true)
   private UUID userDid;
 
-  @Column(name = "name")
+  @Column(
+      name = "name",
+      updatable = false,
+      nullable = false,
+      unique = true,
+      columnDefinition = "TEXT")
   private String name;
 
-  @Column(name = "email")
+  @Column(
+      name = "email",
+      updatable = false,
+      nullable = false,
+      unique = true,
+      columnDefinition = "TEXT")
   private String email;
 
   protected AbstractUser() {}
