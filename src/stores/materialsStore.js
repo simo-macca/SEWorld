@@ -5,7 +5,7 @@ export const useMaterialsStore = defineStore('materials', {
     currentDid: null,
   }),
   actions: {
-    select(did) {
+    topicSelected(did) {
       this.currentDid = did
     },
   },

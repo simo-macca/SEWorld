@@ -16,25 +16,21 @@ const topicsStore = useTopicsStore()
 const theme = useThemeStore()
 const router = useRouter()
 
-// Navigate to "Material" view and select topic ID if provided
+// Navigate to "Material" view and topicSelected topic ID if provided
 function goToMaterial(did = null) {
-  topicsStore.select(did)
+  topicsStore.topicSelected(did)
   router.push({ name: 'Material' })
 }
 
 const usersStore = useUsersStore()
 
-// Richiamo l'azione una volta montato
 onMounted(() => {
   usersStore.getUser()
 })
 
-// Computed legge dallo stato reattivo
 const userName = computed(() => {
-  // 1) Prendo il nome completo, o null
   const fullName = usersStore.user?.['name']
   if (!fullName) {
-    // se non c'è nome, torno il fallback "NF"
     return 'NF'
   }
 
@@ -99,7 +95,7 @@ const userName = computed(() => {
               >
                 {{ userName }}
               </button>
-              <ul class="dropdown-menu" style="left: -80px">
+              <ul class="dropdown-menu dropdown-menu-end">
                 <li><RouterLink class="dropdown-item" to="/profile">Profile</RouterLink></li>
                 <li><hr class="dropdown-divider" /></li>
                 <li><RouterLink class="dropdown-item" to="/">Log out</RouterLink></li>

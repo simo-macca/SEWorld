@@ -1,13 +1,19 @@
 <script setup>
 import SearchBar from '@/components/SearchBar.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
-import { computed } from 'vue'
-import { useTopicsStore } from '@/stores/topicsStore.js'
 
 const collapse = useCollapseStore()
 
-const topic = useTopicsStore()
-const topicName = computed(() => (topic.currentDid ? `for : ${topic.currentDid}` : ''))
+const props = defineProps({
+  topicDid: {
+    type: String,
+    required: true,
+  },
+  topicName: {
+    type: String,
+    required: true,
+  },
+})
 </script>
 
 <template>

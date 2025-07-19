@@ -22,11 +22,19 @@ const routes = [
     path: '/materials',
     name: 'Material',
     component: () => import('@/views/MaterialsView.vue'),
+    props: (route) => ({
+      topicDid: route.query.topicDid || '',
+      topicName: route.query.topicName || '',
+    }),
   },
   {
     path: '/exercises',
     name: 'Exercises',
     component: () => import('@/views/ExercisesView.vue'),
+    props: (route) => ({
+      topicDid: route.query.topicDid || '',
+      topicName: route.query.topicName || '',
+    }),
   },
   {
     path: '/profile',
