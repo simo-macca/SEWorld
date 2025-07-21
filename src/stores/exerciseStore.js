@@ -4,25 +4,24 @@ import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 
-export const useTopicsStore = defineStore('topics', {
+export const useExercisesStore = defineStore('exercises', {
   state: () => ({
-    currentTopic: null,
-    topics: [],
+    currentExercises: null,
+    exercises: [],
   }),
   actions: {
     async getTopics() {
       try {
-        const res = await api.get('/topic')
-        this.topics = res.data.body
+        const res = await api.get('/exercise')
+        this.exercises = res.data.body
         console.log(res.data.message)
       } catch (err) {
         toast.error(err.response.data.message || err.message)
       }
     },
-  },
-  getters: {
-    findCurrentTopic: (state) => (slug) => {
-      return state['currentTopic'] || state['topics'].find((t) => t.topicSlug === slug)
+    topicSelected(topicName) {
+      sessionStorage.setItem('currentTopic', JSON.stringify(topicName))
+      this.currentTopic = topicName
     },
   },
 })

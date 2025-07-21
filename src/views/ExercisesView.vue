@@ -1,18 +1,23 @@
 <script setup>
 import SearchBar from '@/components/SearchBar.vue'
+import { computed } from 'vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
+import { useTopicsStore } from '@/stores/topicsStore.js'
+import { BCard, BNav, BNavItem } from 'bootstrap-vue-next'
 
 const collapse = useCollapseStore()
+const topicStore = useTopicsStore()
 
 const props = defineProps({
-  topicDid: {
+  topicSlug: {
     type: String,
     required: true,
   },
-  topicName: {
-    type: String,
-    required: true,
-  },
+})
+
+const topicName = computed(() => {
+  let name = topicStore.findCurrentTopic(props.topicSlug) || props.topicSlug
+  return name.charAt(0).toUpperCase() + name.slice(1).split('-').join(' ')
 })
 </script>
 
@@ -21,33 +26,12 @@ const props = defineProps({
     <SearchBar v-if="collapse.isCollapse" class="mobile" />
     <div class="container-fluid">
       <h1 class="mt-4 mb-4">Exercise {{ topicName }}</h1>
-      <div class="">
-        <h2 class="">Not Completed</h2>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-      </div>
-      <div class="border border-2 rounded-pill mt-4 mb-4"></div>
-      <div class="">
-        <h2>Completed</h2>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-        <div class="">ciao</div>
-      </div>
+      <b-nav tabs justified>
+        <b-nav-item active>ALL</b-nav-item>
+        <b-nav-item>NOT COMPLETED</b-nav-item>
+        <b-nav-item>COMPLETED</b-nav-item>
+      </b-nav>
+      <div class="container"></div>
     </div>
   </main>
 </template>

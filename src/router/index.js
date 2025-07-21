@@ -15,26 +15,20 @@ const routes = [
   },
   {
     path: '/topics',
-    name: 'Topic',
+    name: 'Topics',
     component: () => import('@/views/TopicsView.vue'),
   },
   {
-    path: '/materials',
-    name: 'Material',
+    path: '/materials/:topicSlug?',
+    name: 'Materials',
     component: () => import('@/views/MaterialsView.vue'),
-    props: (route) => ({
-      topicDid: route.query.topicDid || '',
-      topicName: route.query.topicName || '',
-    }),
+    props: true,
   },
   {
-    path: '/exercises',
+    path: '/exercises/:topicSlug',
     name: 'Exercises',
     component: () => import('@/views/ExercisesView.vue'),
-    props: (route) => ({
-      topicDid: route.query.topicDid || '',
-      topicName: route.query.topicName || '',
-    }),
+    props: true,
   },
   {
     path: '/profile',

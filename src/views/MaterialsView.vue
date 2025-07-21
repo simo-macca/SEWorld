@@ -4,20 +4,25 @@ import SearchBar from '@/components/SearchBar.vue'
 import { BCard, BCardTitle } from 'bootstrap-vue-next'
 import { FileText, UserRound, ExternalLink, Download, File } from 'lucide-vue-next'
 import { useCollapseStore } from '@/stores/isCollapse.js'
+import { computed } from 'vue'
+import { useTopicsStore } from '@/stores/topicsStore.js'
 
 // Stores & Reactive State
 const collapse = useCollapseStore()
+const topicStore = useTopicsStore()
 
 // Computed Properties
 const props = defineProps({
-  topicDid: {
+  topicSlug: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
   },
-  topicName: {
-    type: String,
-    required: true,
-  },
+})
+
+const topicName = computed(() => {
+  let name = topicStore.findCurrentTopic(props.topicSlug) || props.topicSlug
+  return name.charAt(0).toUpperCase() + name.slice(1).split('-').join(' ')
 })
 
 // Static Data
@@ -146,7 +151,7 @@ function getTypeClass(type) {
   <main>
     <SearchBar v-if="collapse.isCollapse" class="mobile" />
     <div class="container-fluid">
-      <h1 class="mt-4 mb-4">Materials {{ props.topicName }}</h1>
+      <h1 class="mt-4 mb-4">Materials {{ topicName }}</h1>
       <div class="col" v-for="obj in materials" :key="obj.id" style="min-width: 20em">
         <b-card header-bg-variant="transparent" class="mb-4 shadow rounded">
           <template #header>
