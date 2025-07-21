@@ -60,8 +60,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import { BButton } from 'bootstrap-vue-next'
+import { ref } from 'vue'
+
 const loginUrl = ref('http://localhost:8080/oauth2/authorization/switch-edu-id')
 
 // Redirect function

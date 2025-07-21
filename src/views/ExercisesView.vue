@@ -1,9 +1,10 @@
 <script setup>
-import SearchBar from '@/components/SearchBar.vue'
+import { BNav, BNavItem } from 'bootstrap-vue-next'
 import { computed } from 'vue'
+
+import SearchBar from '@/components/SearchBar.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useTopicsStore } from '@/stores/topicsStore.js'
-import { BCard, BNav, BNavItem } from 'bootstrap-vue-next'
 
 const collapse = useCollapseStore()
 const topicStore = useTopicsStore()

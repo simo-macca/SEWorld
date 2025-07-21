@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import { handleError } from '@/api/errorHandler.js'
 
 // Axios instance configured for API requests.

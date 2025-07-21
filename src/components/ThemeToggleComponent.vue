@@ -1,5 +1,6 @@
 <script setup>
 import { useThemeStore } from '@/stores/isDark'
+
 const theme = useThemeStore()
 </script>
 

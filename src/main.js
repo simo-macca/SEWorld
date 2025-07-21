@@ -1,7 +1,10 @@
-import { createApp, h } from 'vue'
+import { createBootstrap } from 'bootstrap-vue-next'
+import { Check, CircleAlert, TriangleAlert, Info, X } from 'lucide-vue-next'
 import { createPinia } from 'pinia'
-
+import { createApp, h } from 'vue'
 // Core components
+import Toast, { TYPE } from 'vue-toastification'
+
 import App from './App.vue'
 import router from './router'
 
@@ -18,12 +21,9 @@ import '@/assets/style.css'
 
 // Bootstrap JS for components
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import { createBootstrap } from 'bootstrap-vue-next'
 
 // Toastification
-import Toast, { TYPE } from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
-import { Check, CircleAlert, TriangleAlert, Info, X } from 'lucide-vue-next'
 
 const app = createApp(App)
 

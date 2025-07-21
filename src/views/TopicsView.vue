@@ -1,17 +1,17 @@
 <script setup>
 // Vue & Router APIs
+import { BButton, BCard, BCardText, BProgress } from 'bootstrap-vue-next'
 import { onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Composition stores
-import { useSearch } from '@/stores/useSearch.js'
-import { useThemeStore } from '@/stores/isDark'
+import SearchBar from '@/components/SearchBar.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
+import { useThemeStore } from '@/stores/isDark'
 import { useTopicsStore } from '@/stores/topicsStore.js'
+import { useSearch } from '@/stores/useSearch.js'
 
 // UI Components
-import SearchBar from '@/components/SearchBar.vue'
-import { BButton, BCard, BCardText, BProgress } from 'bootstrap-vue-next'
 
 // Initialize stores
 const theme = useThemeStore()

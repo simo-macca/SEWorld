@@ -1,7 +1,8 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import ThemeToggle from '@/components/ThemeToggleComponent.vue'
+
 import HeaderComponent from '@/components/HeaderComponent.vue'
+import ThemeToggle from '@/components/ThemeToggleComponent.vue'
 </script>
 
 <template>

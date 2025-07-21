@@ -1,11 +1,12 @@
 <script setup>
 // Imports
-import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { computed, onMounted, ref, watch } from 'vue'
+import { RouterLink, useRouter, useRoute } from 'vue-router'
+
+import SearchBar from '@/components/SearchBar.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useThemeStore } from '@/stores/isDark.js'
 import { useUsersStore } from '@/stores/usersStore.js'
-import SearchBar from '@/components/SearchBar.vue'
 
 // Constants
 const collapse = useCollapseStore()

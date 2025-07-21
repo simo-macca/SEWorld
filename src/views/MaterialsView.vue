@@ -1,10 +1,11 @@
 <script setup>
 // Imports
-import SearchBar from '@/components/SearchBar.vue'
 import { BCard, BCardTitle } from 'bootstrap-vue-next'
 import { FileText, UserRound, ExternalLink, Download, File } from 'lucide-vue-next'
-import { useCollapseStore } from '@/stores/isCollapse.js'
 import { computed } from 'vue'
+
+import SearchBar from '@/components/SearchBar.vue'
+import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useTopicsStore } from '@/stores/topicsStore.js'
 
 // Stores & Reactive State

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import api from '@/api/api.js'
 import { useToast } from 'vue-toastification'
+
+import api from '@/api/api.js'
 
 const toast = useToast()
 

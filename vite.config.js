@@ -1,16 +1,14 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
-
 // Vue and related plugins
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import vueDevTools from 'vite-plugin-vue-devtools'
-
+import { fileURLToPath, URL } from 'node:url'
 // Auto-import and components
 import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
+import Icons from 'unplugin-icons/vite'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from 'vite'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 export default defineConfig({
   plugins: [

@@ -1,10 +1,11 @@
 <script setup>
 // Imports
-import { ref } from 'vue'
 import { BButton, BCardText } from 'bootstrap-vue-next'
-import { useThemeStore } from '@/stores/isDark.js'
-import { MdPreview } from 'md-editor-v3'
 import { Download, ExternalLink } from 'lucide-vue-next'
+import { MdPreview } from 'md-editor-v3'
+import { ref } from 'vue'
+
+import { useThemeStore } from '@/stores/isDark.js'
 
 // Props definition
 const props = defineProps({

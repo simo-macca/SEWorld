@@ -31,3 +31,7 @@ coverage
 
 test-results/
 playwright-report/
+
+
+
+src/views/provaView.vue
