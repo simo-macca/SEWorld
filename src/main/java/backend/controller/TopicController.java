@@ -4,7 +4,6 @@ import backend.controller.dto.ApiResponse;
 import backend.controller.dto.CreateTopicDTO;
 import backend.controller.dto.TopicDTO;
 import backend.model.Instructor;
-import backend.model.Topic;
 import backend.service.AbstractUserService;
 import backend.service.TopicService;
 import java.security.SecureRandom;
@@ -32,17 +31,23 @@ public class TopicController {
   @GetMapping
   public ResponseEntity<ApiResponse<List<TopicDTO>>> getAllTopics() {
     List<TopicDTO> topics = topicService.getAllTopics();
-    ApiResponse<List<TopicDTO>> body =
-        new ApiResponse<>(topics,
-            "Topics found");
-    return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    ApiResponse<List<TopicDTO>> body = new ApiResponse<>(topics, "Topics found");
+    return ResponseEntity.ok().body(body);
   }
 
-  @GetMapping("/{did}")
-  public ResponseEntity<ApiResponse<TopicDTO>> getTopic(@PathVariable UUID did) {
-    TopicDTO topic = topicService.getTopicByDid(did);
+  @GetMapping("/get_by_did/{did}")
+  public ResponseEntity<ApiResponse<TopicDTO>> getTopic(@PathVariable("did") UUID topicDid) {
+    TopicDTO topic = topicService.getTopicByDid(topicDid);
     ApiResponse<TopicDTO> body = new ApiResponse<>(topic, "Topic found");
-    return ResponseEntity.status(HttpStatus.OK).body(body);
+    return ResponseEntity.ok().body(body);
+  }
+
+  @GetMapping("get_by_slug/{slug}")
+  public ResponseEntity<ApiResponse<TopicDTO>> getTopicBySlug(
+      @PathVariable("slug") String topicSlug) {
+    TopicDTO topic = topicService.getTopicBySlug(topicSlug);
+    ApiResponse<TopicDTO> body = new ApiResponse<>(topic, "Topic found");
+    return ResponseEntity.ok(body);
   }
 
   @PostMapping

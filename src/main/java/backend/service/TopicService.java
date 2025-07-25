@@ -30,7 +30,9 @@ public class TopicService {
     if (topics.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Topics not found");
     }
-    return topics.stream().map(topic -> new TopicDTO(topic, secureRandom.nextDouble() * 100.0)).toList();
+    return topics.stream()
+        .map(topic -> new TopicDTO(topic, secureRandom.nextDouble() * 100.0))
+        .toList();
   }
 
   @Transactional(readOnly = true)
@@ -48,5 +50,15 @@ public class TopicService {
   public void createTopic(Instructor instructor, CreateTopicDTO createTopicDTO) {
     topicRepository.save(
         new Topic(createTopicDTO.title(), createTopicDTO.description(), instructor));
+  }
+
+  @Transactional(readOnly = true)
+  public TopicDTO getTopicBySlug(String topicSlug) {
+    Topic topic =
+        topicRepository
+            .getBySlug(topicSlug)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
+    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
   }
 }

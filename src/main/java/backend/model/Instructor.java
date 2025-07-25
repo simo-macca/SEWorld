@@ -1,9 +1,6 @@
 package backend.model;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +9,11 @@ import java.util.UUID;
 @DiscriminatorValue("Instructor")
 public class Instructor extends AbstractUser {
 
-  @OneToMany(mappedBy = "topicOwner", fetch = FetchType.LAZY)
+  @OneToMany(
+      mappedBy = "topicOwner",
+      fetch = FetchType.LAZY,
+      cascade = CascadeType.REMOVE,
+      orphanRemoval = true)
   private List<Topic> ownedTopics = new ArrayList<>();
 
   protected Instructor() {}

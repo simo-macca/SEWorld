@@ -4,15 +4,12 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "topics", uniqueConstraints = @UniqueConstraint(columnNames = "slug"))
 public class Topic {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "user_did", updatable = false, nullable = false, unique = true)
-  private Long id;
-
-  @Column(name = "topic_did", updatable = false, nullable = false, unique = true)
+  @GeneratedValue(strategy = GenerationType.UUID)
+  @Column(name = "topic_did", updatable = false, nullable = false)
   private UUID topicDid;
 
   @Column(name = "topic_title", nullable = false, columnDefinition = "TEXT")
@@ -21,6 +18,9 @@ public class Topic {
   @Column(name = "topic_description", columnDefinition = "TEXT")
   private String topicDescription;
 
+  @Column(name = "topic_slug", nullable = false, unique = true, length = 255)
+  private String slug;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "topic_owner", updatable = false, nullable = false)
   private Instructor topicOwner;
@@ -28,18 +28,19 @@ public class Topic {
   protected Topic() {}
 
   public Topic(String topicTitle, String topicDescription, Instructor topicOwner) {
-    this.topicDid = UUID.randomUUID();
+    //    this.topicDid = UUID.randomUUID();
     this.topicTitle = topicTitle;
     this.topicDescription = topicDescription;
     this.topicOwner = topicOwner;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
+  @PrePersist
+  @PreUpdate
+  private void generateSlug() {
+    if (topicTitle != null) {
+      this.slug =
+          topicTitle.trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
+    }
   }
 
   public UUID getTopicDid() {
@@ -64,6 +65,14 @@ public class Topic {
 
   public void setTopicDescription(String topicDescription) {
     this.topicDescription = topicDescription;
+  }
+
+  public String getSlug() {
+    return slug;
+  }
+
+  public void setSlug(String slug) {
+    this.slug = slug;
   }
 
   public Instructor getTopicOwner() {
