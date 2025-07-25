@@ -10,6 +10,7 @@ import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useThemeStore } from '@/stores/isDark'
 import { useTopicsStore } from '@/stores/topicsStore.js'
 import { useSearch } from '@/stores/useSearch.js'
+import { useUsersStore } from '@/stores/usersStore.js'
 
 // UI Components
 
@@ -17,6 +18,7 @@ import { useSearch } from '@/stores/useSearch.js'
 const theme = useThemeStore()
 const collapse = useCollapseStore()
 const topicsStore = useTopicsStore()
+const user = useUsersStore()
 const router = useRouter()
 
 // Reactive list of topics
@@ -31,17 +33,15 @@ const {
   clearSearch,
 } = useSearch(topics, searchFields)
 
-// Handle events from header search component
+// Handle events from a header search component
 const onHeaderSearch = (e) => setSearchQuery(e.detail.query)
 
 // Fetch topics on mount
 onMounted(() => {
   topicsStore.getTopics()
-})
-
-onMounted(() => {
   window.addEventListener('header-search', onHeaderSearch)
 })
+
 onUnmounted(() => {
   window.removeEventListener('header-search', onHeaderSearch)
 })
@@ -64,12 +64,12 @@ function navigateTo(slug, view) {
     />
 
     <!-- Search results info -->
-    <div v-if="searchQuery && filteredTopics.length" class="mb-3">
-      <small class="text-muted">
-        Showing {{ filteredTopics.length }} of {{ topics.length }} topics for "{{ searchQuery }}"
-        <button class="btn btn-link btn-sm p-0 ms-2" @click="clearSearch">Show all</button>
-      </small>
-    </div>
+    <ResultSearchBar
+      :searchQuery="searchQuery"
+      :numSearched="filteredTopics.length"
+      :numElem="topics.length"
+      :clearSearch="clearSearch"
+    />
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <!-- No results found -->
@@ -96,6 +96,7 @@ function navigateTo(slug, view) {
 
           <!-- Progress bar with dynamic variant -->
           <b-progress
+            v-if="user.user.role === 'Student'"
             :value="topic['topicProgress']"
             max="100"
             animated
