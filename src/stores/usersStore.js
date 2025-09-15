@@ -9,6 +9,7 @@ export const useUsersStore = defineStore('users', {
   state: () => ({
     loggedIn: false,
     user: null,
+    isInstructor: false,
   }),
   actions: {
     async getUser() {
@@ -17,6 +18,7 @@ export const useUsersStore = defineStore('users', {
         this.loggedIn = true
         console.log(res.data['message'])
         this.user = res.data['body']
+        this.isInstructor = res.data.body.role === 'Instructor'
       } catch (err) {
         toast.error(err.response.data.message || err.message)
       }

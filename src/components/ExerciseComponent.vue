@@ -1,7 +1,10 @@
 <script setup>
 // Imports
-import { SquareCheckBig, X, RotateCcw, List, Repeat } from 'lucide-vue-next'
+import { SquareCheckBig, RotateCcw, List, Repeat, SquareIcon, Upload, Trash } from 'lucide-vue-next'
 import { BButton, BCard } from 'bootstrap-vue-next'
+import { useUsersStore } from '@/stores/usersStore.js'
+import { computed, ref } from 'vue'
+import ConfirmModalComponent from '@/components/ConfirmModalComponent.vue'
 
 // Props definition
 const props = defineProps({
@@ -17,36 +20,106 @@ const statusConfig = {
     iconComponent: SquareCheckBig,
   },
   false: {
-    iconClass: 'text-danger',
-    iconComponent: X,
+    iconClass: 'text-secondary-light',
+    iconComponent: SquareIcon,
   },
 }
 
 const getStatusConfig = (isCompleted) => {
   return statusConfig[isCompleted] || { iconClass: '', iconComponent: null }
 }
+
+const userStore = useUsersStore()
+const isInstructor = computed(() => userStore.isInstructor)
+
+const showPublishModal = ref(false)
+const showDeleteModal = ref(false)
+
+function confirmPublish() {
+  console.log('✅ Publish confirmed for', props.exercise['exerciseTitle'])
+}
+
+function confirmDelete() {
+  console.log('❌ Delete confirmed for', props.exercise['exerciseTitle'])
+}
 </script>
 
 <template>
   <div class="p-4 border">
     <b-card class="h-100">
-      <h5>{{ exercise['exerciseTitle'] }}</h5>
-      <p>{{ exercise['exerciseDescription'] }}</p>
+      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <Repeat aria-label="Tentativi" />
-          <small>{{ exercise['exerciseCreatedDate'] }} tentativi</small>
-        </div>
-        <div>
-          <b-button variant="outline-primary" size="sm"> <RotateCcw /> Ultimo tentativo </b-button>
-          <b-button variant="outline-secondary" size="sm" class="ms-2"> <List /> Tutti </b-button>
+        <h5>{{ exercise['exerciseTitle'] }}</h5>
+        <div class="d-flex align-items-center gap-2" v-if="!isInstructor">
+          <component
+            :is="getStatusConfig(props.exercise['exerciseIsCompleted']).iconComponent"
+            :class="getStatusConfig(props.exercise['exerciseIsCompleted']).iconClass"
+          />
+          <div>
+            <Repeat aria-label="Tentativi" />
+            <span>10</span>
+          </div>
         </div>
       </div>
-      <component
-        :is="getStatusConfig(props.exercise['exerciseIsCompleted']).iconComponent"
-        :class="getStatusConfig(props.exercise['exerciseIsCompleted']).iconClass"
-      />
+
+      <!-- Description -->
+      <p>{{ exercise['exerciseDescription'] }}</p>
+
+      <!-- Footer -->
+      <div class="d-flex justify-content-between align-items-center pt-3">
+        <small
+          ><span class="text-secondary-light">Created on:</span>
+          {{ exercise['exerciseCreatedDate'] }}</small
+        >
+
+        <div v-if="isInstructor">
+          <!-- Publish -->
+          <b-button
+            variant="outline-primary"
+            size="sm"
+            v-if="exercise['exerciseIsDraft']"
+            @click="showPublishModal = true"
+          >
+            <Upload /> Public
+          </b-button>
+          <ConfirmModalComponent
+            v-model="showPublishModal"
+            title="Publish Exercise"
+            :message="`Are you sure you want to publish this exercise ${exercise['exerciseTitle']}? This action cannot be undone.`"
+            ok-title="Publish"
+            ok-variant="outline-success"
+            @confirm="confirmPublish"
+          />
+
+          <!-- Modify -->
+          <b-button
+            variant="outline-secondary"
+            size="sm"
+            class="ms-2"
+            v-if="exercise['exerciseIsDraft']"
+            ><List /> Modify</b-button
+          >
+
+          <!-- Delete -->
+          <b-button variant="danger" size="sm" class="ms-2" @click="showDeleteModal = true">
+            <Trash /> Delete
+          </b-button>
+          <ConfirmModalComponent
+            v-model="showDeleteModal"
+            title="Delete Exercise"
+            :message="`Are you sure to delete ${exercise['exerciseTitle']}? This action is irreversible.`"
+            ok-title="Delete"
+            ok-variant="outline-danger"
+            @confirm="confirmDelete"
+          />
+        </div>
+        <div v-else>
+          <b-button variant="outline-primary" size="sm"><RotateCcw /> Last attempt</b-button>
+          <b-button variant="outline-secondary" size="sm" class="ms-2"
+            ><List /> All attempt
+          </b-button>
+        </div>
+      </div>
     </b-card>
-    <!--    {{ props.exercise['exerciseTitle'] }} - {{ props.exercise['exerciseIsCompleted'] }}-->
   </div>
 </template>

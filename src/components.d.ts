@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AddButtonComponent: typeof import('./components/AddButtonComponent.vue')['default']
+    ConfirmModalComponent: typeof import('./components/ConfirmModalComponent.vue')['default']
     ExerciseComponent: typeof import('./components/ExerciseComponent.vue')['default']
     HeaderComponent: typeof import('./components/HeaderComponent.vue')['default']
     MaterialComponent: typeof import('./components/MaterialComponent.vue')['default']

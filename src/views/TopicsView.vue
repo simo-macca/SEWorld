@@ -21,6 +21,8 @@ const topicsStore = useTopicsStore()
 const user = useUsersStore()
 const router = useRouter()
 
+const isInstructor = user.isInstructor
+
 // Reactive list of topics
 const topics = computed(() => topicsStore.topics)
 
@@ -96,7 +98,7 @@ function navigateTo(slug, view) {
 
           <!-- Progress bar with dynamic variant -->
           <b-progress
-            v-if="user.user.role === 'Student'"
+            v-if="!isInstructor"
             :value="topic['topicProgress']"
             max="100"
             animated
@@ -134,5 +136,6 @@ function navigateTo(slug, view) {
         </b-card>
       </div>
     </div>
+    <AddButtonComponent v-if="isInstructor" :route="`/topics`" />
   </main>
 </template>
