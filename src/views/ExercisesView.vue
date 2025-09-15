@@ -268,7 +268,7 @@ onUnmounted(() => {
           <div v-for="ex in exercisesStudentFiltered" :key="ex.exerciseDid" class="mt-4 mb-4">
             <ExerciseComponent :exercise="ex" />
           </div>
-          </div>
+        </div>
       </div>
     </div>
     <AddButtonComponent v-if="isInstructor" :route="`/topics`" />

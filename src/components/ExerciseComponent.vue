@@ -67,10 +67,14 @@ function confirmDelete() {
 
       <!-- Footer -->
       <div class="d-flex justify-content-between align-items-center pt-3">
-        <small
-          ><span class="text-secondary-light">Created on:</span>
-          {{ exercise['exerciseCreatedDate'] }}</small
-        >
+        <small class="d-flex flex-column row-gap-1">
+          <span v-if="exercise['exerciseCreatedDate']" class="text-secondary-light"
+            >Created on: {{ exercise['exerciseCreatedDate'] }}</span
+          >
+          <span v-if="exercise['exerciseOwner']" class="text-secondary-light"
+            >by: {{ exercise['exerciseOwner'] }}</span
+          >
+        </small>
 
         <div v-if="isInstructor">
           <!-- Publish -->
