@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "topics", uniqueConstraints = @UniqueConstraint(columnNames = "slug"))
+@Table(name = "topics", uniqueConstraints = @UniqueConstraint(columnNames = "topic_slug"))
 public class Topic {
 
   @Id
@@ -18,8 +18,8 @@ public class Topic {
   @Column(name = "topic_description", columnDefinition = "TEXT")
   private String topicDescription;
 
-  @Column(name = "topic_slug", nullable = false, unique = true, length = 255)
-  private String slug;
+  @Column(name = "topic_slug", nullable = false, unique = true)
+  private String topicSlug;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "topic_owner", updatable = false, nullable = false)
@@ -28,7 +28,6 @@ public class Topic {
   protected Topic() {}
 
   public Topic(String topicTitle, String topicDescription, Instructor topicOwner) {
-    //    this.topicDid = UUID.randomUUID();
     this.topicTitle = topicTitle;
     this.topicDescription = topicDescription;
     this.topicOwner = topicOwner;
@@ -38,7 +37,7 @@ public class Topic {
   @PreUpdate
   private void generateSlug() {
     if (topicTitle != null) {
-      this.slug =
+      this.topicSlug =
           topicTitle.trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
     }
   }
@@ -67,12 +66,12 @@ public class Topic {
     this.topicDescription = topicDescription;
   }
 
-  public String getSlug() {
-    return slug;
+  public String getTopicSlug() {
+    return topicSlug;
   }
 
-  public void setSlug(String slug) {
-    this.slug = slug;
+  public void setTopicSlug(String slug) {
+    this.topicSlug = slug;
   }
 
   public Instructor getTopicOwner() {

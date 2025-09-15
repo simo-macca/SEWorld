@@ -56,7 +56,7 @@ public class TopicService {
   public TopicDTO getTopicBySlug(String topicSlug) {
     Topic topic =
         topicRepository
-            .getBySlug(topicSlug)
+            .getByTopicSlug(topicSlug)
             .orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
     return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);

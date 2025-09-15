@@ -6,7 +6,6 @@ import backend.controller.dto.TopicDTO;
 import backend.model.Instructor;
 import backend.service.AbstractUserService;
 import backend.service.TopicService;
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class TopicController {
 
   private final AbstractUserService abstractUserService;
-
-  private final SecureRandom secureRandom = new SecureRandom();
   private final TopicService topicService;
 
   public TopicController(AbstractUserService abstractUserService, TopicService topicService) {
