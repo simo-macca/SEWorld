@@ -1,7 +1,9 @@
 package backend.model;
 
+import backend.controller.dto.CreateExerciseDTO;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -20,18 +22,15 @@ public class Exercise {
   @Column(name = "exercise_description", columnDefinition = "TEXT")
   private String exerciseDescription;
 
-  @Column(name = "exercise_is_draft", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-  private boolean exerciseIsDraft;
+  @Column(name = "exercise_is_draft", nullable = false)
+  private boolean exerciseIsDraft = true;
 
-  @Column(
-      name = "exercise_is_completed",
-      nullable = false,
-      columnDefinition = "BOOLEAN DEFAULT FALSE")
-  private boolean exerciseIsCompleted;
+  @Column(name = "exercise_is_completed", nullable = false)
+  private boolean exerciseIsCompleted = false;
 
   @CreationTimestamp
   @Column(name = "exercise_created_date", nullable = false, updatable = false)
-  private LocalDateTime exerciseCreatedDate;
+  private LocalDate exerciseCreatedDate;
 
   @Column(name = "exercise_slug", nullable = false, unique = true)
   private String exerciseSlug;
@@ -59,6 +58,19 @@ public class Exercise {
               .replaceAll("[^a-z0-9]+", "-")
               .replaceAll("(^-|-$)", "");
     }
+  }
+
+  public void update(CreateExerciseDTO createExerciseDTO) {
+    if (StringUtils.isNotBlank(createExerciseDTO.title())) {
+      this.exerciseTitle = createExerciseDTO.title();
+    }
+    if (StringUtils.isNotBlank(createExerciseDTO.description())) {
+      this.exerciseDescription = createExerciseDTO.description();
+    }
+  }
+
+  public void publish() {
+    this.exerciseIsDraft = false;
   }
 
   public UUID getTopicDid() {
@@ -101,11 +113,11 @@ public class Exercise {
     this.exerciseIsCompleted = exerciseIsCompleted;
   }
 
-  public LocalDateTime getExerciseCreatedDate() {
+  public LocalDate getExerciseCreatedDate() {
     return exerciseCreatedDate;
   }
 
-  public void setExerciseCreatedDate(LocalDateTime exerciseCreatedDate) {
+  public void setExerciseCreatedDate(LocalDate exerciseCreatedDate) {
     this.exerciseCreatedDate = exerciseCreatedDate;
   }
 

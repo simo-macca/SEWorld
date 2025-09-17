@@ -3,6 +3,7 @@ package backend.controller;
 import backend.controller.dto.ApiResponse;
 import backend.controller.dto.CreateTopicDTO;
 import backend.controller.dto.TopicDTO;
+import backend.model.AbstractUser;
 import backend.model.Instructor;
 import backend.service.AbstractUserService;
 import backend.service.TopicService;
@@ -26,7 +27,8 @@ public class TopicController {
   }
 
   @GetMapping
-  public ResponseEntity<ApiResponse<List<TopicDTO>>> getAllTopics() {
+  public ResponseEntity<ApiResponse<List<TopicDTO>>> getAllTopics(
+      @AuthenticationPrincipal Object principal) {
     List<TopicDTO> topics = topicService.getAllTopics();
     ApiResponse<List<TopicDTO>> body = new ApiResponse<>(topics, "Topics found");
     return ResponseEntity.ok().body(body);
@@ -50,8 +52,12 @@ public class TopicController {
   @PostMapping
   public ResponseEntity<?> createTopic(
       @AuthenticationPrincipal Object principal, @RequestBody CreateTopicDTO createTopicDTO) {
-    Instructor Instructor = (Instructor) abstractUserService.createOrFindUser(principal);
-    topicService.createTopic(Instructor, createTopicDTO);
+    AbstractUser user = abstractUserService.createOrFindUser(principal);
+    if (!(user instanceof Instructor instructor)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(new ApiResponse<>(null, "Only instructors can create topics"));
+    }
+    topicService.createTopic(instructor, createTopicDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(null, "Topic created"));
   }
 }

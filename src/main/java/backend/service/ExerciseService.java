@@ -40,19 +40,37 @@ public class ExerciseService {
     return new ExerciseDTO(exercise);
   }
 
+  @Transactional(readOnly = true)
+  public ExerciseDTO getExerciseBySlug(String exerciseSlug) {
+    return new ExerciseDTO(getBySlug(exerciseSlug));
+  }
+
   @Transactional
   public void createExercise(Instructor instructor, CreateExerciseDTO createExerciseDTO) {
     exerciseRepository.save(
         new Exercise(createExerciseDTO.title(), createExerciseDTO.description(), instructor));
   }
 
-  @Transactional(readOnly = true)
-  public ExerciseDTO getExerciseBySlug(String exerciseSlug) {
-    Exercise exercise =
-        exerciseRepository
-            .getByExerciseSlug(exerciseSlug)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercise not found"));
-    return new ExerciseDTO(exercise);
+  @Transactional
+  public void updateExercise(String exerciseSlug, CreateExerciseDTO exerciseDTO) {
+    Exercise exercise = getBySlug(exerciseSlug);
+    exercise.update(exerciseDTO);
+    exerciseRepository.save(exercise);
+  }
+
+  @Transactional
+  public void publishExercise(String exerciseSlug) {
+    Exercise exercise = getBySlug(exerciseSlug);
+    exercise.publish();
+    exerciseRepository.save(exercise);
+  }
+
+  private Exercise getBySlug(String slug) {
+    return exerciseRepository
+        .getByExerciseSlug(slug)
+        .orElseThrow(
+            () ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Exercise not found by slug: " + slug));
   }
 }

@@ -1,14 +1,14 @@
 package backend.controller.dto;
 
 import backend.model.Exercise;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public record ExerciseDTO(
     String exerciseTitle,
     String exerciseDescription,
     boolean exerciseIsDraft,
     boolean exerciseIsCompleted,
-    LocalDateTime exerciseCreatedDate,
+    LocalDate exerciseCreatedDate,
     String exerciseSlug,
     String exerciseOwner) {
 
