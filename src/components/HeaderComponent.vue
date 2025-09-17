@@ -16,7 +16,7 @@ const router = useRouter()
 const route = useRoute()
 const headerSearchQuery = ref('')
 
-// Computed: derive user initials and search bar context
+// Computed: derive userStore initials and search bar context
 const userName = computed(() => {
   const name = usersStore.user?.['name']
   if (!name) return 'NF'
@@ -55,7 +55,7 @@ function emitHeaderSearch(query) {
   )
 }
 
-// Lifecycle: fetch user on mount
+// Lifecycle: fetch userStore on mount
 onMounted(() => {
   usersStore.getUser()
 })

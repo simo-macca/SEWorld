@@ -16,8 +16,10 @@ export const useTopicsStore = defineStore('topics', {
         const res = await api.get('/topic')
         this.topics = res.data.body
         console.log(res.data.message)
+        return res
       } catch (err) {
         toast.error(err.response.data.message || err.message)
+        throw err
       }
     },
   },

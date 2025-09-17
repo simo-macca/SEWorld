@@ -12,6 +12,7 @@ declare module 'vue' {
     ConfirmModalComponent: typeof import('./components/ConfirmModalComponent.vue')['default']
     ExerciseComponent: typeof import('./components/ExerciseComponent.vue')['default']
     HeaderComponent: typeof import('./components/HeaderComponent.vue')['default']
+    LoaderComponent: typeof import('./components/LoaderComponent.vue')['default']
     MaterialComponent: typeof import('./components/MaterialComponent.vue')['default']
     ResultSearchBar: typeof import('./components/ResultSearchBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

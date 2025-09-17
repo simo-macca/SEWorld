@@ -22,6 +22,7 @@ watch(
 watch(show, (val) => emit('update:modelValue', val))
 
 function handleOk() {
+  emit('update:modelValue', false)
   emit('confirm')
 }
 </script>

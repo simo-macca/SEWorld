@@ -1,7 +1,7 @@
 <script setup>
 // Vue & Router APIs
 import { BButton, BCard, BCardText, BProgress } from 'bootstrap-vue-next'
-import { onMounted, onUnmounted, computed } from 'vue'
+import { onMounted, onUnmounted, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Composition stores
@@ -18,10 +18,11 @@ import { useUsersStore } from '@/stores/usersStore.js'
 const theme = useThemeStore()
 const collapse = useCollapseStore()
 const topicsStore = useTopicsStore()
-const user = useUsersStore()
+const userStore = useUsersStore()
 const router = useRouter()
 
-const isInstructor = user.isInstructor
+const loading = ref(false)
+const isInstructor = userStore.isInstructor
 
 // Reactive list of topics
 const topics = computed(() => topicsStore.topics)
@@ -39,9 +40,14 @@ const {
 const onHeaderSearch = (e) => setSearchQuery(e.detail.query)
 
 // Fetch topics on mount
-onMounted(() => {
-  topicsStore.getTopics()
+onMounted(async () => {
   window.addEventListener('header-search', onHeaderSearch)
+  loading.value = true
+  try {
+    await topicsStore.getTopics()
+  } finally {
+    loading.value = false
+  }
 })
 
 onUnmounted(() => {
@@ -73,7 +79,10 @@ function navigateTo(slug, view) {
       :clearSearch="clearSearch"
     />
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <div v-if="loading">
+      <LoaderComponent />
+    </div>
+    <div v-else class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <!-- No results found -->
       <div
         v-if="searchQuery && filteredTopics.length === 0"

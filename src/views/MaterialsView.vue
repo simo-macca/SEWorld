@@ -2,15 +2,20 @@
 // Imports
 import { BCard, BCardTitle } from 'bootstrap-vue-next'
 import { FileText, UserRound, ExternalLink, Download, File } from 'lucide-vue-next'
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 import SearchBar from '@/components/SearchBar.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useTopicsStore } from '@/stores/topicsStore.js'
+import { useMaterialsStore } from '@/stores/materialsStore.js'
+import { useSearch } from '@/stores/useSearch.js'
+
+const loading = ref(false)
 
 // Stores & Reactive State
 const collapse = useCollapseStore()
 const topicStore = useTopicsStore()
+const materialsStore = useMaterialsStore()
 
 // Computed Properties
 const props = defineProps({
@@ -146,12 +151,57 @@ function getTypeClass(type) {
   const cls = typeClass[type.toLowerCase()]
   return cls || 'bg-secondary-subtle text-secondary-emphasis'
 }
+
+// Setup search composable: filters by topicTitle
+const searchFields = ['title']
+const {
+  searchQuery,
+  filteredItems: materialsSearched,
+  setSearchQuery,
+  clearSearch,
+} = useSearch(materials, searchFields)
+
+// Handle events from a header search component
+const onHeaderSearch = (e) => setSearchQuery(e.detail.query)
+
+onMounted(async () => {
+  window.addEventListener('header-search', onHeaderSearch)
+  loading.value = true
+  try {
+    await materialsStore.getMaterial()
+  } finally {
+    loading.value = false
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('header-search', onHeaderSearch)
+})
 </script>
 
 <template>
   <main>
+    <!-- Mobile search bar -->
     <SearchBar v-if="collapse.isCollapse" class="mobile" />
-    <div class="container-fluid">
+    <!-- Search results info -->
+    <ResultSearchBar
+      :searchQuery="searchQuery"
+      :numSearched="materialsSearched.length"
+      :numElem="materials.length"
+      :clearSearch="clearSearch"
+    />
+    <div v-if="loading">
+      <LoaderComponent />
+    </div>
+    <div
+      v-else-if="searchQuery && materialsSearched.length === 0"
+      class="h1 w-100 text-center position-absolute top-50 start-50 translate-middle"
+    >
+      No material found for: <br />
+      "{{ searchQuery }}"
+    </div>
+
+    <div v-else class="container-fluid">
       <h1 class="mt-4 mb-4">Materials {{ topicName }}</h1>
       <div class="col" v-for="obj in materials" :key="obj.id" style="min-width: 20em">
         <b-card header-bg-variant="transparent" class="mb-4 shadow rounded">

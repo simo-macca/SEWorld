@@ -9,7 +9,7 @@ import { useThemeStore } from '@/stores/isDark.js'
 
 // Props definition
 const props = defineProps({
-  exercise: {
+  material: {
     type: Object,
     required: true,
   },
@@ -23,7 +23,7 @@ const theme = useThemeStore()
 async function download() {
   try {
     // 1. Extract URL and filename
-    const fileUrl = props.exercise['content']
+    const fileUrl = props.material['content']
     const filename = fileUrl.split('/').pop()
 
     // 2. Fetch the file (CORS)
@@ -63,26 +63,26 @@ async function download() {
     style="min-height: 5em; overflow: auto"
   >
     <div class="d-flex align-items-center justify-content-between w-100">
-      <span>{{ props.exercise['description'] }}</span>
+      <span>{{ props.material['description'] }}</span>
       <button
-        v-if="props.exercise['type'] === 'markdown'"
+        v-if="props.material['type'] === 'markdown'"
         :class="`btn ${theme.isDark ? 'btn-outline-info' : 'btn-info'}`"
         type="button"
         data-bs-toggle="collapse"
-        :data-bs-target="`#collapse-${props.exercise['id']}`"
+        :data-bs-target="`#collapse-${props.material['id']}`"
         aria-expanded="false"
-        :aria-controls="`collapse-${props.exercise['id']}`"
+        :aria-controls="`collapse-${props.material['id']}`"
         @click="open = !open"
       >
         {{ props.open ? 'Close' : 'Open' }} Markdown
       </button>
     </div>
 
-    <div v-if="props.exercise['type'] === 'markdown'" class="w-100 mt-4">
-      <div class="collapse collapsing" :id="`collapse-${props.exercise['id']}`">
+    <div v-if="props.material['type'] === 'markdown'" class="w-100 mt-4">
+      <div class="collapse collapsing" :id="`collapse-${props.material['id']}`">
         <MdPreview
           class="bg-transparent border border-light border-end-0 border-start-0 rounded-end p-2 card card-body"
-          :modelValue="props.exercise['content']"
+          :modelValue="props.material['content']"
           language="en-US"
           :theme="theme.isDark ? 'dark' : 'light'"
           previewTheme="cyanosis"
@@ -90,25 +90,25 @@ async function download() {
         />
       </div>
     </div>
-    <div v-else-if="props.exercise['type'] === 'file'" class="w-100">
+    <div v-else-if="props.material['type'] === 'file'" class="w-100">
       <BButton
         :class="`border ${theme.isDark ? `bg-body-secondary` : `bg-secondary-subtle text-secondary-emphasis`} shadow-sm rounded mt-4 w-100 d-flex align-items-center justify-content-between p-2`"
         @click="download"
       >
-        {{ props.exercise['content'].split('.')[0] }}
+        {{ props.material['content'].split('.')[0] }}
         <span class="d-flex align-items-center justify-content-center gap-2">
-          {{ props.exercise['content'].split('.')[1] }}
+          {{ props.material['content'].split('.')[1] }}
           <Download />
         </span>
       </BButton>
     </div>
-    <div v-else-if="props.exercise['type'] === 'link'" class="w-100">
+    <div v-else-if="props.material['type'] === 'link'" class="w-100">
       <BButton
         :class="`border ${theme.isDark ? `bg-body-secondary` : `bg-secondary-subtle text-secondary-emphasis`} shadow-sm rounded mt-4 w-100 d-flex align-items-center justify-content-between p-2`"
-        :href="`${props.exercise['content']}`"
+        :href="`${props.material['content']}`"
         target="_blank"
       >
-        {{ props.exercise['content'] }}
+        {{ props.material['content'] }}
         <ExternalLink />
       </BButton>
     </div>
@@ -117,12 +117,12 @@ async function download() {
       class="mt-4 overflow-auto p-2 shadow-sm rounded border-top border-bottom"
       style="max-height: 13em; text-align: justify"
     >
-      {{ props.exercise['content'] }}
+      {{ props.material['content'] }}
     </div>
 
     <div class="d-flex flex-wrap gap-2 mt-4">
       <span
-        v-for="t in props.exercise['tags']"
+        v-for="t in props.material['tags']"
         :key="t"
         :class="`p-2 ${theme.isDark ? `bg-body-tertiary` : `bg-dark-subtle text-dark-emphasis`} rounded-pill`"
       >

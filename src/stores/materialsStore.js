@@ -5,7 +5,7 @@ export const useMaterialsStore = defineStore('materials', {
     currentDid: null,
   }),
   actions: {
-    topicSelected(did) {
+    async getMaterial(did) {
       this.currentDid = did
     },
   },
