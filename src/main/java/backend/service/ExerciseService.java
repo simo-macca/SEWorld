@@ -65,6 +65,12 @@ public class ExerciseService {
     exerciseRepository.save(exercise);
   }
 
+    @Transactional
+    public void deleteExercise(String exerciseSlug) {
+        Exercise exercise = getBySlug(exerciseSlug);
+        exerciseRepository.delete(exercise);
+    }
+
   private Exercise getBySlug(String slug) {
     return exerciseRepository
         .getByExerciseSlug(slug)

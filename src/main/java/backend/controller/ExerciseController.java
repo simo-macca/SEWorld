@@ -89,6 +89,17 @@ public class ExerciseController {
     return ResponseEntity.ok().body(createBody(null, "Exercise published"));
   }
 
+    @PatchMapping("delete/{slug}")
+    public ResponseEntity<?> deleteExercise(
+            @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
+        AbstractUser user = abstractUserService.createOrFindUser(principal);
+        if (isStudent(user)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
+        }
+        exerciseService.deleteExercise(exerciseSlug);
+        return ResponseEntity.ok().body(createBody(null, "Exercise deleted"));
+    }
+
   private boolean isStudent(AbstractUser user) {
     return user instanceof Student;
   }
