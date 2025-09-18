@@ -14,12 +14,12 @@ public record ExerciseDTO(
 
   public ExerciseDTO(Exercise exercise) {
     this(
-        exercise.getTopicTitle(),
-        exercise.getTopicDescription(),
+        exercise.getExerciseTitle(),
+        exercise.getExerciseDescription(),
         exercise.IsDraft(),
         exercise.IsCompleted(),
         exercise.getExerciseCreatedDate(),
         exercise.getExerciseSlug(),
-        exercise.getTopicOwner().getName());
+        exercise.getExerciseOwner().getName());
   }
 }

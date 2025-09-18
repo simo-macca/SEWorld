@@ -7,7 +7,6 @@ import backend.model.Topic;
 import backend.repository.TopicRepository;
 import java.security.SecureRandom;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,17 +32,6 @@ public class TopicService {
     return topics.stream()
         .map(topic -> new TopicDTO(topic, secureRandom.nextDouble() * 100.0))
         .toList();
-  }
-
-  @Transactional(readOnly = true)
-  public TopicDTO getTopicByDid(UUID did) {
-    Topic topic =
-        topicRepository
-            .getByTopicDid(did)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
-    double randomScore = secureRandom.nextDouble() * 100.0;
-    return new TopicDTO(topic, randomScore);
   }
 
   @Transactional

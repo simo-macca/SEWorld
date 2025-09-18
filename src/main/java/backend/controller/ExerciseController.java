@@ -9,7 +9,6 @@ import backend.model.Student;
 import backend.service.AbstractUserService;
 import backend.service.ExerciseService;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,13 +35,6 @@ public class ExerciseController {
     List<ExerciseDTO> exercise = exerciseService.getAllExercises();
     ApiResponse<List<ExerciseDTO>> body = new ApiResponse<>(exercise, "Exercises found");
     return ResponseEntity.ok().body(body);
-  }
-
-  @GetMapping("/get_by_did/{did}")
-  public ResponseEntity<ApiResponse<ExerciseDTO>> getExercise(
-      @PathVariable("did") UUID exerciseDid) {
-    ExerciseDTO exercise = exerciseService.getExerciseByDid(exerciseDid);
-    return ResponseEntity.ok().body(createBody(exercise, FOUND_MESSAGE));
   }
 
   @GetMapping("get_by_slug/{slug}")
@@ -89,16 +81,16 @@ public class ExerciseController {
     return ResponseEntity.ok().body(createBody(null, "Exercise published"));
   }
 
-    @PatchMapping("delete/{slug}")
-    public ResponseEntity<?> deleteExercise(
-            @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
-        AbstractUser user = abstractUserService.createOrFindUser(principal);
-        if (isStudent(user)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
-        }
-        exerciseService.deleteExercise(exerciseSlug);
-        return ResponseEntity.ok().body(createBody(null, "Exercise deleted"));
+  @PatchMapping("delete/{slug}")
+  public ResponseEntity<?> deleteExercise(
+      @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
+    AbstractUser user = abstractUserService.createOrFindUser(principal);
+    if (isStudent(user)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
     }
+    exerciseService.deleteExercise(exerciseSlug);
+    return ResponseEntity.ok().body(createBody(null, "Exercise deleted"));
+  }
 
   private boolean isStudent(AbstractUser user) {
     return user instanceof Student;

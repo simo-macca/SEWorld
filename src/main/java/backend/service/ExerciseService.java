@@ -6,7 +6,6 @@ import backend.model.Exercise;
 import backend.model.Instructor;
 import backend.repository.ExerciseRepository;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,16 +27,6 @@ public class ExerciseService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercises not found");
     }
     return exercises.stream().map(ExerciseDTO::new).toList();
-  }
-
-  @Transactional(readOnly = true)
-  public ExerciseDTO getExerciseByDid(UUID did) {
-    Exercise exercise =
-        exerciseRepository
-            .getByExerciseDid(did)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercise not found"));
-    return new ExerciseDTO(exercise);
   }
 
   @Transactional(readOnly = true)
@@ -65,11 +54,11 @@ public class ExerciseService {
     exerciseRepository.save(exercise);
   }
 
-    @Transactional
-    public void deleteExercise(String exerciseSlug) {
-        Exercise exercise = getBySlug(exerciseSlug);
-        exerciseRepository.delete(exercise);
-    }
+  @Transactional
+  public void deleteExercise(String exerciseSlug) {
+    Exercise exercise = getBySlug(exerciseSlug);
+    exerciseRepository.delete(exercise);
+  }
 
   private Exercise getBySlug(String slug) {
     return exerciseRepository

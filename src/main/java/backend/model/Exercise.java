@@ -73,27 +73,27 @@ public class Exercise {
     this.exerciseIsDraft = false;
   }
 
-  public UUID getTopicDid() {
+  public UUID getExerciseDid() {
     return exerciseDid;
   }
 
-  public void setTopicDid(UUID exerciseDid) {
+  public void setExerciseDid(UUID exerciseDid) {
     this.exerciseDid = exerciseDid;
   }
 
-  public String getTopicTitle() {
+  public String getExerciseTitle() {
     return exerciseTitle;
   }
 
-  public void setTopicTitle(String exerciseTitle) {
+  public void setExerciseTitle(String exerciseTitle) {
     this.exerciseTitle = exerciseTitle;
   }
 
-  public String getTopicDescription() {
+  public String getExerciseDescription() {
     return exerciseDescription;
   }
 
-  public void setTopicDescription(String exerciseDescription) {
+  public void setExerciseDescription(String exerciseDescription) {
     this.exerciseDescription = exerciseDescription;
   }
 
@@ -129,11 +129,11 @@ public class Exercise {
     this.exerciseSlug = slug;
   }
 
-  public Instructor getTopicOwner() {
+  public Instructor getExerciseOwner() {
     return exerciseOwner;
   }
 
-  public void setTopicOwner(Instructor exerciseOwner) {
+  public void setExerciseOwner(Instructor exerciseOwner) {
     this.exerciseOwner = exerciseOwner;
   }
 }
