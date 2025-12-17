@@ -1,0 +1,45 @@
+:root[data-bs-theme='light'] {
+  --soft-bg-primary: #fafaf9;
+  --soft-bg-secondary: #f5f5f4;
+  --soft-bg-tertiary: #e7e5e4;
+  --soft-bg-accent: #f3f4f6;
+
+  --soft-text-primary: #374151;
+  --soft-text-secondary: #6b7280;
+  --soft-text-muted: #9ca3af;
+
+  --soft-border-light: #e5e7eb;
+  --soft-border-medium: #d1d5db;
+  --soft-shadow: rgba(0, 0, 0, 0.05);
+
+  --soft-primary: #6366f1;
+  --soft-primary-light: #e0e7ff;
+  --soft-success: #10b981;
+  --soft-success-light: #d1fae5;
+  --soft-info: #06b6d4;
+  --soft-info-light: #cffafe;
+  --soft-warning: #f59e0b;
+  --soft-warning-light: #fef3c7;
+  --soft-danger: #ef4444;
+  --soft-danger-light: #fee2e2;
+
+  --bs-body-bg: var(--soft-bg-primary);
+  --bs-body-color: var(--soft-text-primary);
+  --bs-primary: var(--soft-primary);
+  --bs-secondary: var(--soft-text-secondary);
+  --bs-success: var(--soft-success);
+  --bs-info: var(--soft-info);
+  --bs-warning: var(--soft-warning);
+  --bs-danger: var(--soft-danger);
+  --bs-light: var(--soft-bg-secondary);
+  --bs-dark: var(--soft-text-primary);
+  --bs-border-color: var(--soft-border-light);
+  --bs-border-radius: 0.5rem;
+}
+@media (max-width: 991px) {
+  .mobile {
+    width: 100% !important;
+    display: block !important;
+    margin-bottom: 1em !important;
+  }
+}
