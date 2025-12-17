@@ -1,0 +1,57 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/SEWorld}
+    username: ${SPRING_DATASOURCE_USERNAME:simo_macca}
+    password: ${SPRING_DATASOURCE_PASSWORD:Macauth.real}
+  sql:
+    init:
+      mode: always
+      platform: postgres
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  security:
+    oauth2:
+      client:
+        registration:
+          switch-edu-id:
+            client-id: test-client
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          switch-edu-id:
+            issuer-uri: https://auth.dev.si.usi.ch/auth/realms/simurbs
+      resourceserver:
+        jwt:
+          issuer-uri: https://auth.dev.si.usi.ch/auth/realms/simurbs
+  ai:
+    ollama:
+      embedding:
+        model: deepseek-llm
+      chat:
+        options:
+          model: deepseek-llm
+          temperature: 0.3
+  application:
+    name: SEWorld_backend
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+server:
+  error:
+    include-stacktrace: never
