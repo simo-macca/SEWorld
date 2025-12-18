@@ -1,11 +1,11 @@
 package backend.controller;
 
+import static backend.Utils.*;
+
 import backend.controller.dto.ApiResponse;
 import backend.controller.dto.CreateExerciseDTO;
 import backend.controller.dto.ExerciseDTO;
 import backend.model.AbstractUser;
-import backend.model.Instructor;
-import backend.model.Student;
 import backend.service.AbstractUserService;
 import backend.service.ExerciseService;
 import java.util.List;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth/exercise")
 public class ExerciseController {
-
-  private static final String ONLY_INSTRUCTOR = "Only instructors can ";
 
   private final AbstractUserService abstractUserService;
   private final ExerciseService exerciseService;
@@ -32,8 +30,7 @@ public class ExerciseController {
   @GetMapping
   public ResponseEntity<ApiResponse<List<ExerciseDTO>>> getAllExercises() {
     List<ExerciseDTO> exercise = exerciseService.getAllExercises();
-    ApiResponse<List<ExerciseDTO>> body = new ApiResponse<>(exercise, "Exercises found");
-    return ResponseEntity.ok().body(body);
+    return ResponseEntity.ok().body(createBody(exercise, "Exercises found"));
   }
 
   @GetMapping("/{slug}")
@@ -47,13 +44,13 @@ public class ExerciseController {
   public ResponseEntity<?> createExercise(
       @AuthenticationPrincipal Object principal, @RequestBody CreateExerciseDTO createExerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, ONLY_INSTRUCTOR + "create exercises"));
-    }
-    Instructor instructor = (Instructor) user;
-    exerciseService.createExercise(instructor, createExerciseDTO);
-    return ResponseEntity.status(HttpStatus.CREATED).body(createBody(null, "Exercise created"));
+    return withInstructor(
+        user,
+        "create exercises",
+        instructor -> {
+          exerciseService.createExercise(instructor, createExerciseDTO);
+          return ResponseEntity.status(HttpStatus.CREATED).body(createBody("Exercise created"));
+        });
   }
 
   @PatchMapping("update/{slug}")
@@ -62,54 +59,50 @@ public class ExerciseController {
       @PathVariable("slug") String exerciseSlug,
       @RequestBody CreateExerciseDTO exerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, ONLY_INSTRUCTOR + "update exercises"));
-    }
-    exerciseService.updateExercise(exerciseSlug, exerciseDTO);
-    return ResponseEntity.ok().body(createBody(null, "Exercise modified"));
+    return withInstructor(
+        user,
+        "update exercises",
+        instructor -> {
+          exerciseService.updateExercise(exerciseSlug, exerciseDTO);
+          return ResponseEntity.ok().body(createBody("Exercise modified"));
+        });
   }
 
   @PatchMapping("publish/{slug}")
   public ResponseEntity<?> publishExercise(
       @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, ONLY_INSTRUCTOR + "publish exercises"));
-    }
-    exerciseService.publishExercise(exerciseSlug);
-    return ResponseEntity.ok().body(createBody(null, "Exercise published"));
+    return withInstructor(
+        user,
+        "publish exercises",
+        instructor -> {
+          exerciseService.publishExercise(exerciseSlug);
+          return ResponseEntity.ok().body(createBody("Exercise published"));
+        });
   }
 
   @DeleteMapping
   public ResponseEntity<?> deleteAllExercises(@AuthenticationPrincipal Object principal) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, ONLY_INSTRUCTOR + "delete exercises"));
-    }
-    exerciseService.deleteAllExercises();
-    return ResponseEntity.ok().body(createBody(null, "All exercises deleted"));
+    return withInstructor(
+        user,
+        "delete exercises",
+        instructor -> {
+          exerciseService.deleteAllExercises();
+          return ResponseEntity.ok().body(createBody("All exercises deleted"));
+        });
   }
 
   @DeleteMapping("/{slug}")
   public ResponseEntity<?> deleteExercise(
       @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, ONLY_INSTRUCTOR + "delete exercises"));
-    }
-    exerciseService.deleteExercise(exerciseSlug);
-    return ResponseEntity.ok().body(createBody(null, "Exercise deleted"));
-  }
-
-  private boolean isStudent(AbstractUser user) {
-    return user instanceof Student;
-  }
-
-  private ApiResponse<ExerciseDTO> createBody(ExerciseDTO exerciseDTO, String message) {
-    return new ApiResponse<>(exerciseDTO, message);
+    return withInstructor(
+        user,
+        "delete exercises",
+        instructor -> {
+          exerciseService.deleteExercise(exerciseSlug);
+          return ResponseEntity.ok().body(createBody("Exercise deleted"));
+        });
   }
 }

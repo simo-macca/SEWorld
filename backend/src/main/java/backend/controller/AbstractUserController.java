@@ -1,5 +1,7 @@
 package backend.controller;
 
+import static backend.Utils.createBody;
+
 import backend.controller.dto.ApiResponse;
 import backend.controller.dto.UserDTO;
 import backend.model.AbstractUser;
@@ -23,9 +25,7 @@ public class AbstractUserController {
   public ResponseEntity<ApiResponse<UserDTO>> getCurrentUser(
       @AuthenticationPrincipal Object principal) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    ApiResponse<UserDTO> body =
-        new ApiResponse<>(
-            new UserDTO(user.getName(), user.getEmail(), user.getRole()), "User found");
-    return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    UserDTO userDTO = new UserDTO(user.getName(), user.getEmail(), user.getRole());
+    return ResponseEntity.status(HttpStatus.CREATED).body(createBody(userDTO, "User found"));
   }
 }

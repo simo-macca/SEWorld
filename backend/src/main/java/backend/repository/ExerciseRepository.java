@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExerciseRepository extends JpaRepository<Exercise, UUID> {
-  Optional<Exercise> getByExerciseDid(UUID exerciseDid);
 
   Optional<Exercise> getByExerciseSlug(String exerciseSlug);
+
+  void deleteByExerciseSlug(String exerciseSlug);
 }
