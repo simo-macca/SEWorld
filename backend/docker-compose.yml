@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U simo_macca -d SEWorld"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   ollama:
     image: ollama/ollama
@@ -20,34 +25,13 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    entrypoint: [ "/bin/sh", "-c" ]
-    command: |
-      "
-      # Start Ollama server
-      ollama serve &
-      
-      # Wait for server to start
-      sleep 10
-      
-      # Show available models in registry
-      echo 'AVAILABLE MODELS IN REGISTRY:'
-      ollama list | grep -i deepseek
-      
-      # Check if deepseek-llm is already pulled
-      if ollama list | grep -q 'deepseek-llm'; then
-      echo 'Model deepseek-llm is already available locally'
-      else
-      echo 'Model deepseek-llm not found locally, attempting to pull...'
-      ollama pull deepseek-llm || echo 'Failed to pull deepseek-llm'
-      fi
-      
-      # List all successfully pulled models
-      echo 'Available local models:'
-      ollama list
-      
-      # Keep container running
-      wait
-      "
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: /bin/sh
+    command: -c "ollama serve & sleep 5 && ollama pull deepseek-llm && wait"
 
   app:
     build:
@@ -55,13 +39,15 @@ services:
       dockerfile: Dockerfile
     container_name: SEWorld-Backend
     depends_on:
-      - postgres
-      - ollama
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/SEWorld
       SPRING_DATASOURCE_USERNAME: simo_macca
       SPRING_DATASOURCE_PASSWORD: Macauth.real
-      SPRING_AI_OLLAMA_BASE-URL: http://ollama:11434
+      SPRING_AI_OLLAMA_BASE_URL: http://ollama:11434
     ports:
       - "8080:8080"
 

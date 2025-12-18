@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SeWorldBackendApplication {
+public class SEWorldBackendApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(SeWorldBackendApplication.class, args);
+    SpringApplication.run(SEWorldBackendApplication.class, args);
   }
 }

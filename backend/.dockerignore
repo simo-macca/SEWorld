@@ -1,4 +1,9 @@
 build/
 .gradle/
 .git/
+.idea/
+.vscode/
+out/
 *.log
+*.jar
+.DS_Store
