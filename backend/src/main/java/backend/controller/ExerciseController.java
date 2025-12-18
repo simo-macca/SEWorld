@@ -11,6 +11,7 @@ import backend.service.ExerciseService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,13 +46,14 @@ public class ExerciseController {
   }
 
   @PostMapping
+  @PreAuthorize("hasRole('INSTRUCTOR')")
   public ResponseEntity<?> createExercise(
       @AuthenticationPrincipal Object principal, @RequestBody CreateExerciseDTO createExerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(createBody(null, "Only instructors can create exercises"));
-    }
+    //    if (isStudent(user)) {
+    //      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+    //          .body(createBody(null, "Only instructors can create exercises"));
+    //    }
     Instructor instructor = (Instructor) user;
     exerciseService.createExercise(instructor, createExerciseDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createBody(null, "Exercise created"));

@@ -3,7 +3,6 @@ package backend.model;
 import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 
 import jakarta.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = SINGLE_TABLE)
@@ -17,7 +16,7 @@ public abstract class AbstractUser {
   private long userId;
 
   @Column(name = "user_did", updatable = false, nullable = false, unique = true)
-  private UUID userDid;
+  private String userDid;
 
   @Column(
       name = "name",
@@ -37,7 +36,7 @@ public abstract class AbstractUser {
 
   protected AbstractUser() {}
 
-  public AbstractUser(String name, String email, UUID userDid) {
+  public AbstractUser(String name, String email, String userDid) {
     this.name = name;
     this.email = email;
     this.userDid = userDid;
@@ -51,11 +50,11 @@ public abstract class AbstractUser {
     this.userId = userId;
   }
 
-  public UUID getUserDid() {
+  public String getUserDid() {
     return userDid;
   }
 
-  public void setUserDid(UUID userDid) {
+  public void setUserDid(String userDid) {
     this.userDid = userDid;
   }
 
@@ -75,8 +74,5 @@ public abstract class AbstractUser {
     this.email = email;
   }
 
-  public String getRole() {
-    throw new IllegalStateException(
-        "Cannot perform this operation: neither instructor and student");
-  }
+  public abstract String getRole();
 }

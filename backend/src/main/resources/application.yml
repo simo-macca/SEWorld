@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: SEWorld_backend
   servlet:
     multipart:
       max-file-size: 20MB
@@ -25,10 +27,21 @@ spring:
     oauth2:
       client:
         registration:
+          # switch-edu-id
           switch-edu-id:
             client-id: test-client
             authorization-grant-type: authorization_code
             scope: openid
+          # Google
+          google:
+            client-id: 8140374340-7snisghd72pnjfu0sffqkj1ria4do2pj.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid, profile, email
+          # GitHub
+          github:
+            client-id: Ov23litwWoHghQl5qzRE
+            client-secret: 2362e51bd463a4dc61c0fa101a2450de860da106
+            scope: read:user, user:email
         provider:
           switch-edu-id:
             issuer-uri: https://auth.dev.si.usi.ch/auth/realms/simurbs
@@ -43,8 +56,6 @@ spring:
         options:
           model: deepseek-llm
           temperature: 0.3
-  application:
-    name: SEWorld_backend
 
 logging:
   level:
@@ -55,3 +66,10 @@ logging:
 server:
   error:
     include-stacktrace: never
+
+app:
+  frontend-url: "http://localhost:3000"
+  instructors:
+    - "johndoe@university.edu"
+    - "janesmith@university.edu"
+    - "instructor@example.com"

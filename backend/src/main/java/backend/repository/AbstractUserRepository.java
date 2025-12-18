@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AbstractUserRepository extends CrudRepository<AbstractUser, UUID> {
-  Optional<AbstractUser> getByUserDid(UUID userDid);
+  Optional<AbstractUser> getByUserDid(String userDid);
 }

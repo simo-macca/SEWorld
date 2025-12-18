@@ -3,13 +3,13 @@ package backend.controller;
 import backend.controller.dto.ApiResponse;
 import backend.controller.dto.CreateTopicDTO;
 import backend.controller.dto.TopicDTO;
-import backend.model.AbstractUser;
 import backend.model.Instructor;
 import backend.service.AbstractUserService;
 import backend.service.TopicService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,13 +42,15 @@ public class TopicController {
   }
 
   @PostMapping
+  @PreAuthorize("hasRole('INSTRUCTOR')")
   public ResponseEntity<?> createTopic(
       @AuthenticationPrincipal Object principal, @RequestBody CreateTopicDTO createTopicDTO) {
-    AbstractUser user = abstractUserService.createOrFindUser(principal);
-    if (!(user instanceof Instructor instructor)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-          .body(new ApiResponse<>(null, "Only instructors can create topics"));
-    }
+    Instructor instructor = (Instructor) abstractUserService.createOrFindUser(principal);
+    //    AbstractUser user = abstractUserService.createOrFindUser(principal);
+    //    if (!(user instanceof Instructor instructor)) {
+    //      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+    //              .body(new ApiResponse<>(null, "Only instructors can create topics"));
+    //    }
     topicService.createTopic(instructor, createTopicDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(null, "Topic created"));
   }
