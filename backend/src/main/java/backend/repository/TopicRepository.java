@@ -11,4 +11,6 @@ public interface TopicRepository extends JpaRepository<Topic, UUID> {
   Optional<Topic> getByTopicDid(UUID topicDid);
 
   Optional<Topic> getByTopicSlug(String topicSlug);
+
+  void deleteByTopicSlug(String topicSlug);
 }

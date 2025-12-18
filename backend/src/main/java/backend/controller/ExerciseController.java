@@ -11,7 +11,6 @@ import backend.service.ExerciseService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +18,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth/exercise")
 public class ExerciseController {
 
+  private static final String ONLY_INSTRUCTOR = "Only instructors can ";
+
   private final AbstractUserService abstractUserService;
   private final ExerciseService exerciseService;
-
-  private final String UPDATE_ERROR = "Only instructors can update exercises";
-  private final String FOUND_MESSAGE = "Exercise found";
 
   public ExerciseController(
       AbstractUserService abstractUserService, ExerciseService exerciseService) {
@@ -38,22 +36,21 @@ public class ExerciseController {
     return ResponseEntity.ok().body(body);
   }
 
-  @GetMapping("get_by_slug/{slug}")
+  @GetMapping("/{slug}")
   public ResponseEntity<ApiResponse<ExerciseDTO>> getExerciseBySlug(
       @PathVariable("slug") String exerciseSlug) {
     ExerciseDTO exercise = exerciseService.getExerciseBySlug(exerciseSlug);
-    return ResponseEntity.ok(createBody(exercise, FOUND_MESSAGE));
+    return ResponseEntity.ok(createBody(exercise, "Exercise found"));
   }
 
   @PostMapping
-  @PreAuthorize("hasRole('INSTRUCTOR')")
   public ResponseEntity<?> createExercise(
       @AuthenticationPrincipal Object principal, @RequestBody CreateExerciseDTO createExerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
-    //    if (isStudent(user)) {
-    //      return ResponseEntity.status(HttpStatus.FORBIDDEN)
-    //          .body(createBody(null, "Only instructors can create exercises"));
-    //    }
+    if (isStudent(user)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(createBody(null, ONLY_INSTRUCTOR + "create exercises"));
+    }
     Instructor instructor = (Instructor) user;
     exerciseService.createExercise(instructor, createExerciseDTO);
     return ResponseEntity.status(HttpStatus.CREATED).body(createBody(null, "Exercise created"));
@@ -66,7 +63,8 @@ public class ExerciseController {
       @RequestBody CreateExerciseDTO exerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
     if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(createBody(null, ONLY_INSTRUCTOR + "update exercises"));
     }
     exerciseService.updateExercise(exerciseSlug, exerciseDTO);
     return ResponseEntity.ok().body(createBody(null, "Exercise modified"));
@@ -77,18 +75,31 @@ public class ExerciseController {
       @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
     if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(createBody(null, ONLY_INSTRUCTOR + "publish exercises"));
     }
     exerciseService.publishExercise(exerciseSlug);
     return ResponseEntity.ok().body(createBody(null, "Exercise published"));
   }
 
-  @PatchMapping("delete/{slug}")
+  @DeleteMapping
+  public ResponseEntity<?> deleteAllExercises(@AuthenticationPrincipal Object principal) {
+    AbstractUser user = abstractUserService.createOrFindUser(principal);
+    if (isStudent(user)) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(createBody(null, ONLY_INSTRUCTOR + "delete exercises"));
+    }
+    exerciseService.deleteAllExercises();
+    return ResponseEntity.ok().body(createBody(null, "All exercises deleted"));
+  }
+
+  @DeleteMapping("/{slug}")
   public ResponseEntity<?> deleteExercise(
       @AuthenticationPrincipal Object principal, @PathVariable("slug") String exerciseSlug) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
     if (isStudent(user)) {
-      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(createBody(null, UPDATE_ERROR));
+      return ResponseEntity.status(HttpStatus.FORBIDDEN)
+          .body(createBody(null, ONLY_INSTRUCTOR + "delete exercises"));
     }
     exerciseService.deleteExercise(exerciseSlug);
     return ResponseEntity.ok().body(createBody(null, "Exercise deleted"));

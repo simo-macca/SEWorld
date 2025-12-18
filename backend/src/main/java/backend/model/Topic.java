@@ -1,5 +1,7 @@
 package backend.model;
 
+import backend.controller.dto.CreateTopicDTO;
+import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import java.util.UUID;
 
@@ -39,6 +41,16 @@ public class Topic {
     if (topicTitle != null) {
       this.topicSlug =
           topicTitle.trim().toLowerCase().replaceAll("[^a-z0-9]+", "-").replaceAll("(^-|-$)", "");
+    }
+  }
+
+  public void update(CreateTopicDTO createTopicDTO) {
+    if (StringUtils.isNotBlank(createTopicDTO.title())) {
+      this.topicTitle = createTopicDTO.title();
+      generateSlug();
+    }
+    if (StringUtils.isNotBlank(createTopicDTO.description())) {
+      this.topicDescription = createTopicDTO.description();
     }
   }
 

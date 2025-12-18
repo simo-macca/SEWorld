@@ -34,19 +34,41 @@ public class TopicService {
         .toList();
   }
 
+  @Transactional(readOnly = true)
+  public TopicDTO getTopicBySlug(String topicSlug) {
+    Topic topic = getBySlug(topicSlug);
+    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
+  }
+
   @Transactional
   public void createTopic(Instructor instructor, CreateTopicDTO createTopicDTO) {
     topicRepository.save(
         new Topic(createTopicDTO.title(), createTopicDTO.description(), instructor));
   }
 
-  @Transactional(readOnly = true)
-  public TopicDTO getTopicBySlug(String topicSlug) {
-    Topic topic =
-        topicRepository
-            .getByTopicSlug(topicSlug)
-            .orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
-    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
+  @Transactional
+  public void updateTopic(String topicSlug, CreateTopicDTO topicDTO) {
+    Topic topic = getBySlug(topicSlug);
+    topic.update(topicDTO);
+    topicRepository.save(topic);
+  }
+
+  @Transactional
+  public void deleteAllTopics() {
+    topicRepository.deleteAll();
+  }
+
+  @Transactional
+  public void deleteTopicBySlug(String topicSlug) {
+    topicRepository.deleteByTopicSlug(topicSlug);
+  }
+
+  private Topic getBySlug(String slug) {
+    return topicRepository
+        .getByTopicSlug(slug)
+        .orElseThrow(
+            () ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Topic not found by slug: " + slug));
   }
 }

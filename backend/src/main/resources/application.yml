@@ -69,7 +69,3 @@ server:
 
 app:
   frontend-url: "http://localhost:3000"
-  instructors:
-    - "johndoe@university.edu"
-    - "janesmith@university.edu"
-    - "instructor@example.com"

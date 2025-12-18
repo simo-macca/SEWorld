@@ -86,7 +86,6 @@ public class AbstractUserService {
   }
 
   private AbstractUser createNewUser(String name, String email, String did) {
-    // Check against the list injected from application.yml
     if (INSTRUCTOR_LIST.contains(email)) {
       return abstractUserRepository.save(new Instructor(name, email, did));
     }
