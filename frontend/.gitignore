@@ -14,9 +14,6 @@ dist-ssr
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -29,9 +26,11 @@ coverage
 
 *.tsbuildinfo
 
-test-results/
-playwright-report/
+.eslintcache
 
+# Cypress
+/cypress/videos/
+/cypress/screenshots/
 
-
-src/views/provaView.vue
+# Vitest
+__screenshots__/

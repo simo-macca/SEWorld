@@ -1,37 +1,27 @@
 <script setup>
-// Imports
-import { BCard, BCardTitle } from 'bootstrap-vue-next'
-import { FileText, UserRound, ExternalLink, Download, File } from 'lucide-vue-next'
+import { FileText, ExternalLink, Download, File, UserRound } from 'lucide-vue-next'
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-
-import SearchBar from '@/components/SearchBar.vue'
+import SearchBar from '@/components/SearchComponents/SearchBar.vue'
+import ResultSearchBar from '@/components/SearchComponents/ResultSearchBar.vue'
+import Loader from '@/components/UtilsComponents/Loader.vue'
+import MaterialComponent from '@/components/MaterialComponent.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useTopicsStore } from '@/stores/topicsStore.js'
 import { useMaterialsStore } from '@/stores/materialsStore.js'
 import { useSearch } from '@/stores/useSearch.js'
 
 const loading = ref(false)
-
-// Stores & Reactive State
 const collapse = useCollapseStore()
 const topicStore = useTopicsStore()
 const materialsStore = useMaterialsStore()
 
-// Computed Properties
-const props = defineProps({
-  topicSlug: {
-    type: String,
-    required: false,
-    default: '',
-  },
-})
+const props = defineProps({ topicSlug: { type: String, default: '' } })
 
 const topicName = computed(() => {
   let name = topicStore.findCurrentTopic(props.topicSlug) || props.topicSlug
   return name.charAt(0).toUpperCase() + name.slice(1).split('-').join(' ')
 })
 
-// Static Data
 const materials = [
   {
     id: 1,
@@ -109,59 +99,14 @@ Cras tempor, mi vel dapibus molestie, eros mauris tempus nisl, ut convallis ex j
   },
 ]
 
-// Icon & Style Configuration
-const iconMap = {
-  markdown: FileText,
-  link: ExternalLink,
-  file: Download,
-}
-const iconClass = {
-  markdown: 'bg-primary-subtle',
-  file: 'bg-success-subtle',
-  link: 'bg-danger-subtle',
-}
-const iconColor = {
-  markdown: 'rgb(0, 78, 255)',
-  file: 'rgb(80, 164, 59)',
-  link: 'rgb(255, 51, 66)',
-}
-const typeClass = {
-  markdown: 'bg-primary-subtle text-primary-emphasis',
-  file: 'bg-success-subtle text-success-emphasis',
-  link: 'bg-danger-subtle text-danger-emphasis',
-}
-
-// Utility Functions
-function getIconComponent(type) {
-  const comp = iconMap[type.toLowerCase()]
-  return comp || File
-}
-
-function getIconClass(type) {
-  const cls = iconClass[type.toLowerCase()]
-  return cls || 'bg-secondary-subtle'
-}
-
-function getIconColor(type) {
-  const color = iconColor[type.toLowerCase()]
-  return color || 'rgba(134, 134, 134)'
-}
-
-function getTypeClass(type) {
-  const cls = typeClass[type.toLowerCase()]
-  return cls || 'bg-secondary-subtle text-secondary-emphasis'
-}
-
-// Setup search composable: filters by topicTitle
 const searchFields = ['title']
 const {
   searchQuery,
   filteredItems: materialsSearched,
   setSearchQuery,
   clearSearch,
-} = useSearch(materials, searchFields)
+} = useSearch(materials, searchFields) // Ensure 'materials' is defined
 
-// Handle events from a header search component
 const onHeaderSearch = (e) => setSearchQuery(e.detail.query)
 
 onMounted(async () => {
@@ -173,66 +118,82 @@ onMounted(async () => {
     loading.value = false
   }
 })
+onUnmounted(() => window.removeEventListener('header-search', onHeaderSearch))
 
-onUnmounted(() => {
-  window.removeEventListener('header-search', onHeaderSearch)
-})
+// Tailwind Color mappings for icons
+const typeStyles = {
+  markdown: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  file: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  link: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+}
+function getTypeStyle(type) {
+  return typeStyles[type.toLowerCase()] || typeStyles.default
+}
 </script>
 
 <template>
-  <main>
-    <!-- Mobile search bar -->
-    <SearchBar v-if="collapse.isCollapse" class="mobile" />
-    <!-- Search results info -->
+  <main class="relative min-h-screen">
+    <SearchBar v-if="collapse.isCollapse" class="mb-4 lg:hidden" />
     <ResultSearchBar
       :searchQuery="searchQuery"
       :numSearched="materialsSearched.length"
       :numElem="materials.length"
       :clearSearch="clearSearch"
     />
-    <div v-if="loading">
-      <LoaderComponent />
-    </div>
+
+    <div v-if="loading" class="mt-10 flex justify-center"><Loader /></div>
     <div
       v-else-if="searchQuery && materialsSearched.length === 0"
-      class="h1 w-100 text-center position-absolute top-50 start-50 translate-middle"
+      class="mt-20 flex flex-col items-center justify-center text-xl text-gray-500"
     >
-      No material found for: <br />
-      "{{ searchQuery }}"
+      <p>
+        No material found for: <b>"{{ searchQuery }}"</b>
+      </p>
     </div>
 
-    <div v-else class="container-fluid">
-      <h1 class="mt-4 mb-4">Materials {{ topicName }}</h1>
-      <div class="col" v-for="obj in materials" :key="obj.id" style="min-width: 20em">
-        <b-card header-bg-variant="transparent" class="mb-4 shadow rounded">
-          <template #header>
-            <div class="d-flex align-items-center justify-content-start column-gap-3">
-              <component
-                :is="getIconComponent(obj.type)"
-                :size="30"
-                :color="getIconColor(obj.type)"
-                :class="[getIconClass(obj.type), 'rounded', 'p-1']"
-              />
+    <div v-else>
+      <h1 class="mt-4 mb-6 text-3xl font-bold text-gray-800 dark:text-gray-100">
+        Materials {{ topicName }}
+      </h1>
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div v-for="obj in materials" :key="obj.id" class="min-w-[20em]">
+          <div
+            class="flex h-full flex-col rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+          >
+            <div class="mb-3 flex items-center gap-3">
+              <div :class="[getTypeStyle(obj.type), 'rounded-lg p-2']">
+                <component :is="getIconComponent(obj.type)" class="h-6 w-6" />
+              </div>
               <span
-                :class="`${getTypeClass(obj.type)} rounded-pill p-2 pe-4 ps-4 text-capitalize`"
-                >{{ obj.type }}</span
+                :class="[
+                  getTypeStyle(obj.type),
+                  'rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase',
+                ]"
               >
+                {{ obj.type }}
+              </span>
             </div>
-          </template>
-          <b-card-title>
-            {{ obj.title }}
-          </b-card-title>
-          <MaterialComponent :material="obj" />
-          <template #footer>
-            <div class="d-flex align-items-center justify-content-between text-secondary-emphasis">
-              <div class="flex flex-wrap gap-1">
-                <UserRound />
-                {{ obj.author }}
+
+            <h3 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">
+              {{ obj.title }}
+            </h3>
+
+            <div class="flex-grow">
+              <MaterialComponent :material="obj" />
+            </div>
+
+            <div
+              class="mt-4 flex items-center justify-between border-t border-gray-100 pt-2 text-sm text-gray-500 dark:border-gray-700 dark:text-gray-400"
+            >
+              <div class="flex items-center gap-1">
+                <UserRound class="h-4 w-4" />
+                <span>{{ obj.author }}</span>
               </div>
               <span>{{ obj.date }}</span>
             </div>
-          </template>
-        </b-card>
+          </div>
+        </div>
       </div>
     </div>
   </main>

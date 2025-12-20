@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
-import { useToast } from 'vue-toastification'
-
+import { toast } from 'vue-sonner'
 import api from '@/api/api.js'
-
-const toast = useToast()
 
 export const useExercisesStore = defineStore('exercises', {
   state: () => ({
@@ -19,14 +16,15 @@ export const useExercisesStore = defineStore('exercises', {
         )
         console.log(res.data.message)
       } catch (err) {
-        toast.error(err.response.data.message || err.message)
+        toast.error(err.response?.data?.message || err.message)
       }
     },
 
     async publishExercise(slug) {
       try {
         const res = await api.patch('/exercise/publish/' + slug)
-        console.log(res.data.message)
+        // You can also add a success toast here if you like
+        // toast.success(res.data.message)
         const idx = this.exercises.findIndex((e) => e['exerciseSlug'] === slug)
         if (idx !== -1) {
           this.exercises[idx].exerciseIsDraft = false
@@ -35,7 +33,7 @@ export const useExercisesStore = defineStore('exercises', {
         }
         return res
       } catch (err) {
-        toast.error(err.response.data.message || err.message)
+        toast.error(err.response?.data?.message || err.message)
         throw err
       }
     },
@@ -46,11 +44,10 @@ export const useExercisesStore = defineStore('exercises', {
 
       try {
         const res = await api.patch('/exercise/delete/' + slug)
-        console.log(res.data.message)
         return res
       } catch (err) {
         this.exercises = old
-        toast.error(err.response.data.message || err.message)
+        toast.error(err.response?.data?.message || err.message)
         throw err
       }
     },

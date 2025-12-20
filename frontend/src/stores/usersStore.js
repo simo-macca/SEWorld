@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia'
-import { useToast } from 'vue-toastification'
-
+import { toast } from 'vue-sonner'
 import api from '@/api/api.js'
-
-const toast = useToast()
 
 export const useUsersStore = defineStore('users', {
   state: () => ({
@@ -16,12 +13,12 @@ export const useUsersStore = defineStore('users', {
       try {
         const res = await api.get('/me')
         this.loggedIn = true
-        console.log(res.data['message'])
-        this.user = res.data['body']
+        console.log(res.data.message)
+        this.user = res.data.body
         this.isInstructor = res.data.body.role === 'Instructor'
         return res
       } catch (err) {
-        toast.error(err.response.data.message || err.message)
+        toast.error(err.response?.data?.message || err.message)
         throw err
       }
     },

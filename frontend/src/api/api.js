@@ -1,8 +1,6 @@
 import axios from 'axios'
-
 import { handleError } from '@/api/errorHandler.js'
 
-// Axios instance configured for API requests.
 const api = axios.create({
   baseURL: '/api/auth',
   withCredentials: true,
@@ -11,7 +9,6 @@ const api = axios.create({
   },
 })
 
-// Global error interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
