@@ -1,0 +1,28 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+.generated
+*.swp
+*.swo
+
+# IDE & Editor Directories (Root level)
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# General Logs
+*.log
+
+# Dependency Directories (in case accidental installs happen at root)
+node_modules/
+
+# Environment Variables (Protect secrets)
+.env
+.env.local
+.env.*.local
+
+# Docker (Local/Temporary)
+docker-compose.override.yml
