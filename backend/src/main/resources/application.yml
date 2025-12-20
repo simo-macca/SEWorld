@@ -38,17 +38,7 @@ spring:
             client-id: test-client
             authorization-grant-type: authorization_code
             scope: openid
-          # Google
-          google:
-            client-id: 8140374340-7snisghd72pnjfu0sffqkj1ria4do2pj.apps.googleusercontent.com
-            client-secret: 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
-            scope: openid, profile, email
-          # GitHub
-          github:
-            client-id: Ov23litwWoHghQl5qzRE
-            client-secret: 2362e51bd463a4dc61c0fa101a2450de860da106
-            scope: read:user, user:email
-        provider:
+          provider:
           switch-edu-id:
             issuer-uri: https://auth.dev.si.usi.ch/auth/realms/simurbs
       resourceserver:
