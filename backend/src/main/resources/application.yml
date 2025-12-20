@@ -5,6 +5,12 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
+  cache:
+    type: caffeine
+    cache-names:
+      - SEWorldCache
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=60m # expire after 60 minutes
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/SEWorld}
     username: ${SPRING_DATASOURCE_USERNAME:simo_macca}
@@ -59,6 +65,8 @@ spring:
 
 logging:
   level:
+    org.springframework.cache: TRACE   # See cache hits/misses
+    org.hibernate.SQL: DEBUG           # See database queries
     org:
       springframework:
         security: DEBUG

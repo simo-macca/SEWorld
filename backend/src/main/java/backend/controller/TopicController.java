@@ -46,8 +46,8 @@ public class TopicController {
         user,
         "create topics",
         instructor -> {
-          topicService.createTopic(instructor, createTopicDTO);
-          return ResponseEntity.status(HttpStatus.CREATED).body(createBody("Topic created"));
+          TopicDTO newTopic = topicService.createTopic(instructor, createTopicDTO);
+          return ResponseEntity.status(HttpStatus.CREATED).body(createBody(newTopic, "Topic created"));
         });
   }
 
@@ -61,8 +61,8 @@ public class TopicController {
         user,
         "update topic",
         instructor -> {
-          topicService.updateTopic(topicSlug, topicDTO);
-          return ResponseEntity.ok().body(createBody("Topic modified"));
+          TopicDTO updateTopic = topicService.updateTopic(topicSlug, topicDTO);
+          return ResponseEntity.ok().body(createBody(updateTopic, "Topic modified"));
         });
   }
 

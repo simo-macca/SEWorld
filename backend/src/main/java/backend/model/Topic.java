@@ -3,6 +3,9 @@ package backend.model;
 import backend.controller.dto.CreateTopicDTO;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +29,13 @@ public class Topic {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "topic_owner", updatable = false, nullable = false)
   private Instructor topicOwner;
+
+  @OneToMany(
+          mappedBy = "exerciseTopic",
+          fetch = FetchType.LAZY,
+          cascade = CascadeType.REMOVE,
+          orphanRemoval = true)
+  private List<Exercise> exerciseList = new ArrayList<>();
 
   protected Topic() {}
 
@@ -92,5 +102,13 @@ public class Topic {
 
   public void setTopicOwner(Instructor topicOwner) {
     this.topicOwner = topicOwner;
+  }
+
+  public List<Exercise> getExerciseList() {
+    return exerciseList;
+  }
+
+  public void setExerciseList(List<Exercise> exerciseList) {
+    this.exerciseList = exerciseList;
   }
 }

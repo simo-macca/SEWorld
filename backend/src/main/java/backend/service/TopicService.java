@@ -7,6 +7,9 @@ import backend.model.Topic;
 import backend.repository.TopicRepository;
 import java.security.SecureRandom;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class TopicService {
     this.topicRepository = topicRepository;
   }
 
+  @Cacheable(value = "SEWorldCache", key = "'allTopics'")
   @Transactional(readOnly = true)
   public List<TopicDTO> getAllTopics() {
     List<Topic> topics = topicRepository.findAll();
@@ -34,30 +38,46 @@ public class TopicService {
         .toList();
   }
 
+  @Cacheable(value = "SEWorldCache", key = "#topicSlug")
   @Transactional(readOnly = true)
   public TopicDTO getTopicBySlug(String topicSlug) {
     Topic topic = getBySlug(topicSlug);
     return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
   }
 
+  @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
   @Transactional
-  public void createTopic(Instructor instructor, CreateTopicDTO createTopicDTO) {
-    topicRepository.save(
-        new Topic(createTopicDTO.title(), createTopicDTO.description(), instructor));
+  public TopicDTO createTopic(Instructor instructor, CreateTopicDTO createTopicDTO) {
+    return new TopicDTO(
+        topicRepository.save(
+            new Topic(createTopicDTO.title(), createTopicDTO.description(), instructor)),
+        secureRandom.nextDouble() * 100.0);
   }
 
+  @Caching(
+      evict = {
+        @CacheEvict(value = "SEWorldCache", key = "#topicSlug"), // Clear specific entry
+        @CacheEvict(value = "SEWorldCache", key = "'allTopics'") // Clear the list
+      })
   @Transactional
-  public void updateTopic(String topicSlug, CreateTopicDTO topicDTO) {
+  public TopicDTO updateTopic(String topicSlug, CreateTopicDTO topicDTO) {
     Topic topic = getBySlug(topicSlug);
     topic.update(topicDTO);
     topicRepository.save(topic);
+    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
   }
 
+  @CacheEvict(value = "SEWorldCache", allEntries = true)
   @Transactional
   public void deleteAllTopics() {
     topicRepository.deleteAll();
   }
 
+  @Caching(
+      evict = {
+        @CacheEvict(value = "SEWorldCache", key = "#topicSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
+      })
   @Transactional
   public void deleteTopicBySlug(String topicSlug) {
     topicRepository.deleteByTopicSlug(topicSlug);

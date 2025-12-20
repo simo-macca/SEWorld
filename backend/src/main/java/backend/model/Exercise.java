@@ -1,6 +1,6 @@
 package backend.model;
 
-import backend.controller.dto.CreateExerciseDTO;
+import backend.controller.dto.UpdateExerciseDTO;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -39,11 +39,20 @@ public class Exercise {
   @JoinColumn(name = "exercise_owner", updatable = false, nullable = false)
   private Instructor exerciseOwner;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "exercise_topic", updatable = false, nullable = false)
+  private Topic exerciseTopic;
+
   protected Exercise() {}
 
-  public Exercise(String exerciseTitle, String exerciseDescription, Instructor exerciseOwner) {
+  public Exercise(
+      String exerciseTitle,
+      String exerciseDescription,
+      Topic exerciseTopic,
+      Instructor exerciseOwner) {
     this.exerciseTitle = exerciseTitle;
     this.exerciseDescription = exerciseDescription;
+    this.exerciseTopic = exerciseTopic;
     this.exerciseOwner = exerciseOwner;
   }
 
@@ -60,12 +69,13 @@ public class Exercise {
     }
   }
 
-  public void update(CreateExerciseDTO createExerciseDTO) {
-    if (StringUtils.isNotBlank(createExerciseDTO.title())) {
-      this.exerciseTitle = createExerciseDTO.title();
+  public void update(UpdateExerciseDTO updateExerciseDTO) {
+    if (StringUtils.isNotBlank(updateExerciseDTO.title())) {
+      this.exerciseTitle = updateExerciseDTO.title();
+      generateSlug();
     }
-    if (StringUtils.isNotBlank(createExerciseDTO.description())) {
-      this.exerciseDescription = createExerciseDTO.description();
+    if (StringUtils.isNotBlank(updateExerciseDTO.description())) {
+      this.exerciseDescription = updateExerciseDTO.description();
     }
   }
 
@@ -135,5 +145,13 @@ public class Exercise {
 
   public void setExerciseOwner(Instructor exerciseOwner) {
     this.exerciseOwner = exerciseOwner;
+  }
+
+  public Topic getExerciseTopic() {
+    return exerciseTopic;
+  }
+
+  public void setExerciseTopic(Topic exerciseTopic) {
+    this.exerciseTopic = exerciseTopic;
   }
 }

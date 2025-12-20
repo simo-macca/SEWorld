@@ -5,6 +5,7 @@ import static backend.Utils.*;
 import backend.controller.dto.ApiResponse;
 import backend.controller.dto.CreateExerciseDTO;
 import backend.controller.dto.ExerciseDTO;
+import backend.controller.dto.UpdateExerciseDTO;
 import backend.model.AbstractUser;
 import backend.service.AbstractUserService;
 import backend.service.ExerciseService;
@@ -29,8 +30,8 @@ public class ExerciseController {
 
   @GetMapping
   public ResponseEntity<ApiResponse<List<ExerciseDTO>>> getAllExercises() {
-    List<ExerciseDTO> exercise = exerciseService.getAllExercises();
-    return ResponseEntity.ok().body(createBody(exercise, "Exercises found"));
+    List<ExerciseDTO> exercises = exerciseService.getAllExercises();
+    return ResponseEntity.ok().body(createBody(exercises, "Exercises found"));
   }
 
   @GetMapping("/{slug}")
@@ -38,6 +39,13 @@ public class ExerciseController {
       @PathVariable("slug") String exerciseSlug) {
     ExerciseDTO exercise = exerciseService.getExerciseBySlug(exerciseSlug);
     return ResponseEntity.ok(createBody(exercise, "Exercise found"));
+  }
+
+  @GetMapping("get_by_topic/{slug}")
+  public ResponseEntity<ApiResponse<List<ExerciseDTO>>> getAllExercisesByTopicSlug(
+      @PathVariable("slug") String topicSlug) {
+    List<ExerciseDTO> exercises = exerciseService.getAllExercisesByTopicSlug(topicSlug);
+    return ResponseEntity.ok(createBody(exercises, "Exercises found"));
   }
 
   @PostMapping
@@ -57,13 +65,13 @@ public class ExerciseController {
   public ResponseEntity<?> updateExercise(
       @AuthenticationPrincipal Object principal,
       @PathVariable("slug") String exerciseSlug,
-      @RequestBody CreateExerciseDTO exerciseDTO) {
+      @RequestBody UpdateExerciseDTO updateExerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
     return withInstructor(
         user,
         "update exercises",
         instructor -> {
-          exerciseService.updateExercise(exerciseSlug, exerciseDTO);
+          exerciseService.updateExercise(exerciseSlug, updateExerciseDTO);
           return ResponseEntity.ok().body(createBody("Exercise modified"));
         });
   }
