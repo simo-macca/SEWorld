@@ -22,6 +22,6 @@ public record ExerciseDTO(
         exercise.getExerciseCreatedDate(),
         exercise.getExerciseSlug(),
         exercise.getExerciseOwner().getName(),
-            exercise.getExerciseTopic().getTopicSlug());
+        exercise.getExerciseTopic().getTopicSlug());
   }
 }

@@ -70,11 +70,12 @@ public class ExerciseService {
             createExerciseDTO.title(), createExerciseDTO.description(), topic, instructor));
   }
 
-  @Caching(evict = {
-          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
-          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
-          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+        @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+      })
   @Transactional
   public ExerciseDTO updateExercise(String exerciseSlug, UpdateExerciseDTO updateExerciseDTO) {
     Exercise exercise = getBySlug(exerciseSlug);
@@ -83,11 +84,12 @@ public class ExerciseService {
     return new ExerciseDTO(exercise);
   }
 
-  @Caching(evict = {
-          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
-          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
-          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+        @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+      })
   @Transactional
   public ExerciseDTO publishExercise(String exerciseSlug) {
     Exercise exercise = getBySlug(exerciseSlug);
@@ -102,11 +104,12 @@ public class ExerciseService {
     exerciseRepository.deleteAll();
   }
 
-  @Caching(evict = {
-          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
-          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
-          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
-  })
+  @Caching(
+      evict = {
+        @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+        @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+      })
   @Transactional
   public ExerciseDTO deleteExercise(String exerciseSlug) {
     Exercise exercise = getBySlug(exerciseSlug);
