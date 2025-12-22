@@ -44,6 +44,10 @@ const searchContext = computed(() => {
   }
 })
 
+const logoLink = computed(() => {
+  return usersStore.loggedIn ? '/topics' : '/'
+})
+
 // --- Methods ---
 function goToMaterial() {
   router.push({ name: 'Materials' })
@@ -91,7 +95,7 @@ watch(
       <!-- Logo name -->
       <div class="flex items-center justify-between">
         <RouterLink
-          to="/"
+          :to="logoLink"
           class="bg-linear-to-r from-blue-600 to-cyan-500 bg-clip-text text-2xl font-extrabold text-transparent transition-transform hover:scale-105 dark:from-blue-400 dark:to-cyan-400"
         >
           SEWorld
