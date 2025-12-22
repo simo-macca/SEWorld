@@ -20,20 +20,20 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['show-modal', 'show-confirm'])
+const emit = defineEmits(['show-update', 'show-delete'])
 
 const theme = useThemeStore()
 const userStore = useUsersStore()
 const topicStore = useTopicsStore()
 
-function showDelete(topic) {
-  topicStore.currentTopic = topic
-  emit('show-confirm')
-}
-
 function showUpdate(topic) {
   topicStore.currentTopic = topic
-  emit('show-modal')
+  emit('show-update')
+}
+
+function showDelete(topic) {
+  topicStore.currentTopic = topic
+  emit('show-delete')
 }
 </script>
 
@@ -76,7 +76,7 @@ function showUpdate(topic) {
       <button
         v-for="name in ['Exercises', 'Materials']"
         :key="name"
-        @click="navigateFunction(topic.topicSlug, name)"
+        @click="navigateFunction(topic, name)"
         class="rounded px-4 py-2 font-medium transition-colors focus:outline-none"
         :class="
           theme.isDark

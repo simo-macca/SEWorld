@@ -46,6 +46,7 @@ export const useTopicsStore = defineStore('topics', {
         const updatedTopic = res.data.body
 
         const idx = this.topics.findIndex((t) => t.topicSlug === slug)
+
         if (idx !== -1) {
           this.topics[idx] = updatedTopic
         }
@@ -73,8 +74,8 @@ export const useTopicsStore = defineStore('topics', {
     },
   },
   getters: {
-    findCurrentTopic: (state) => (slug) => {
-      return state['currentTopic'] || state['topics'].find((t) => t.topicSlug === slug)
+    findTopic: (state) => (slug) => {
+      return state.topics.find((t) => t.topicSlug === slug)
     },
   },
 })

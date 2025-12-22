@@ -12,6 +12,9 @@ import { useUsersStore } from '@/stores/usersStore.js'
 import TopicCard from '@/components/TopicComponents/TopicCard.vue'
 import TopicModal from '@/components/TopicComponents/TopicModal.vue'
 import ConfirmModal from '@/components/UtilsComponents/ConfirmModal.vue'
+import EmptyState from '@/components/UtilsComponents/EmptyState.vue'
+import { useExercisesStore } from '@/stores/exerciseStore.js'
+import { toast } from 'vue-sonner'
 
 const collapse = useCollapseStore()
 const topicsStore = useTopicsStore()
@@ -23,11 +26,12 @@ const isUpdating = ref(false)
 const isCreating = ref(false)
 const isDeleting = ref(false)
 const topicStore = useTopicsStore()
+const isInstructor = userStore.isInstructor
 
 const searchFields = ['topicTitle']
 const {
   searchQuery,
-  filteredItems: filteredTopics,
+  filteredItems: topicSearched,
   setSearchQuery,
   clearSearch,
 } = useSearch(topics, searchFields)
@@ -50,9 +54,13 @@ onUnmounted(() => {
   window.removeEventListener('header-search', onHeaderSearch)
 })
 
-function navigateTo(slug, view) {
-  topicsStore.currentTopic = slug
-  router.push({ name: view, params: { topicSlug: slug } })
+// Update the function signature to accept the topic object
+function navigateTo(topic, view) {
+  router.push({
+    name: view,
+    params: { topicSlug: topic.topicSlug },
+    state: { topicTitle: topic.topicTitle },
+  })
 }
 
 function getProgressColor(progress) {
@@ -85,57 +93,69 @@ async function deleteTopic(topicSlug) {
     <!-- Result Search Bar -->
     <ResultSearchBar
       :searchQuery="searchQuery"
-      :numSearched="filteredTopics.length"
+      :numSearched="topicSearched.length"
       :numElem="topics.length"
       :clearSearch="clearSearch"
     />
 
     <!-- Loading Spinner -->
-    <Loader v-if="loading" class="mt-10 flex h-full items-center justify-center" />
+    <div v-if="loading" class="mt-20 flex justify-center">
+      <Loader />
+    </div>
+
+    <!-- Empty State - No Search Results -->
+    <EmptyState
+      v-else-if="searchQuery && topicSearched.length === 0"
+      icon="🔍"
+      title="No topics found"
+      :description="`No topics match &quot;${searchQuery}&quot;`"
+      actionText="Clear search"
+      @action="clearSearch"
+    />
+
+    <!-- Empty State - No Topics -->
+    <EmptyState
+      v-else-if="!searchQuery && topics.length === 0"
+      :icon="isInstructor ? '📝' : '📚'"
+      :title="isInstructor ? 'No Topic yet' : 'No Topic available'"
+      :description="
+        isInstructor
+          ? 'Create your first topic to get started'
+          : 'Your instructor hasn\'t added any topics yet'
+      "
+    />
 
     <!-- Topics List -->
-    <div v-else>
-      <!-- Empty Search Result -->
-      <div
-        v-if="searchQuery && filteredTopics.length === 0"
-        class="mt-20 flex flex-col items-center justify-center text-xl text-gray-500 sm:text-3xl"
-      >
-        <p>No topics found for:</p>
-        <p class="font-bold">"{{ searchQuery }}"</p>
-      </div>
-
+    <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <!-- Single Topic Card -->
-      <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div v-for="topic in filteredTopics" :key="topic.topicDid" class="min-w-[20em]">
-          <TopicCard
-            :topic="topic"
-            :progressClass="getProgressColor(topic.topicProgress)"
-            :navigateFunction="navigateTo"
-            @show-modal="isUpdating = true"
-            @show-confirm="isDeleting = true"
-          />
-        </div>
+      <div v-for="topic in topicSearched" :key="topic.topicDid" class="min-w-[20em]">
+        <TopicCard
+          :topic="topic"
+          :progressClass="getProgressColor(topic.topicProgress)"
+          :navigateFunction="navigateTo"
+          @show-update="isUpdating = true"
+          @show-delete="isDeleting = true"
+        />
       </div>
     </div>
 
+    <!-- Topic Modal for update -->
     <TopicModal
-      v-if="isUpdating && topicStore.currentTopic"
+      v-if="topicStore.currentTopic"
       :is-open="isUpdating"
       :current-topic="topicStore.currentTopic"
       :isUpdating="true"
       @close="isUpdating = false"
     />
 
-    <TopicModal
-      v-if="isCreating"
-      :is-open="isCreating"
-      :isCreating="true"
-      @close="isCreating = false"
-    />
+    <!-- Topic Modal for creation -->
+    <TopicModal :is-open="isCreating" :isCreating="true" @close="isCreating = false" />
 
+    <!-- Confirmation Modal for deletion of a topic -->
     <ConfirmModal
-      v-if="isDeleting && topicStore.currentTopic"
-      v-model="isDeleting"
+      v-if="topicStore.currentTopic"
+      :isOpen="isDeleting"
+      @close="isDeleting = false"
       title="Delete Topic"
       :message="`Are you sure you want to delete ${topicStore.currentTopic.topicTitle}?`"
       ok-title="Delete"
@@ -144,6 +164,6 @@ async function deleteTopic(topicSlug) {
     />
 
     <!-- Add Topic Button -->
-    <AddButton v-if="userStore.isInstructor" :route="`/topics`" @click="isCreating = true" />
+    <AddButton v-if="isInstructor" :route="`/topics`" @click="isCreating = true" />
   </main>
 </template>

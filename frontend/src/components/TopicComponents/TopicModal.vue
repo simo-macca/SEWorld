@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { X, Edit3, Save, AlertCircle } from 'lucide-vue-next'
 import { useTopicsStore } from '@/stores/topicsStore.js'
 
@@ -21,10 +21,10 @@ const topicStore = useTopicsStore()
 // Watch for modal opening to reset values
 watch(
   () => props.isOpen,
-  (newVal) => {
-    if (newVal) {
-      title.value = props.currentTopic.topicTitle || ''
-      description.value = props.currentTopic.topicDescription || ''
+  (isOpen) => {
+    if (isOpen) {
+      title.value = props.currentTopic?.topicTitle || ''
+      description.value = props.currentTopic?.topicDescription || ''
       errors.value = { title: '', description: '' }
     }
   },
@@ -94,6 +94,21 @@ function handleClose() {
     emit('close')
   }
 }
+
+// Handle ESC key
+function handleEscape(e) {
+  if (e.key === 'Escape' && props.isOpen) {
+    handleClose()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleEscape)
+})
 </script>
 
 <template>

@@ -18,8 +18,13 @@ const materialsStore = useMaterialsStore()
 const props = defineProps({ topicSlug: { type: String, default: '' } })
 
 const topicName = computed(() => {
-  let name = topicStore.findCurrentTopic(props.topicSlug) || props.topicSlug
-  return name.charAt(0).toUpperCase() + name.slice(1).split('-').join(' ')
+  if (history.state?.topicTitle) return history.state.topicTitle
+
+  const topic = topicStore.findTopic(props.topicSlug)
+  if (topic) return topic.topicTitle
+
+  const text = props.topicSlug || ''
+  return text.charAt(0).toUpperCase() + text.slice(1).split('-').join(' ')
 })
 
 const materials = [

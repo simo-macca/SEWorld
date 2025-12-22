@@ -14,11 +14,15 @@ defineProps({
 <template>
   <div class="relative h-4 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-600">
     <div
-      class="striped-bg flex h-4 items-center justify-center rounded-full font-bold text-white"
+      class="striped-bg h-4 rounded-full transition-all duration-300 ease-out"
       :class="nameClass"
       :style="{ width: topicProgress + '%' }"
-    >
-      {{ Math.round(topicProgress) }}%
+    ></div>
+
+    <div class="absolute inset-0 flex items-center justify-center">
+      <span class="text-gray-700 drop-shadow-sm dark:text-white">
+        {{ Math.round(topicProgress) }}%
+      </span>
     </div>
   </div>
 </template>

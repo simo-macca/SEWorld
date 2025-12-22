@@ -4,7 +4,7 @@ import api from '@/api/api.js'
 
 export const useExercisesStore = defineStore('exercises', {
   state: () => ({
-    currentExercises: null,
+    currentExercise: null,
     exercises: [],
   }),
   actions: {
@@ -20,17 +20,30 @@ export const useExercisesStore = defineStore('exercises', {
       }
     },
 
+    async getExerciseByTopic(slug) {
+      try {
+        const res = await api.get('/exercise/get_by_topic/' + slug)
+        this.exercises = res.data.body.sort(
+          (a, b) => new Date(a.exerciseCreatedDate) - new Date(b.exerciseCreatedDate),
+        )
+        console.log(res.data.message)
+      } catch (err) {
+        toast.error(err.response?.data?.message || err.message)
+      }
+    },
+
     async publishExercise(slug) {
       try {
         const res = await api.patch('/exercise/publish/' + slug)
-        // You can also add a success toast here if you like
-        // toast.success(res.data.message)
-        const idx = this.exercises.findIndex((e) => e['exerciseSlug'] === slug)
+
+        const idx = this.exercises.findIndex((exercise) => exercise.exerciseSlug === slug)
+
         if (idx !== -1) {
           this.exercises[idx].exerciseIsDraft = false
-        } else {
-          await this.getExercises()
         }
+
+        console.log(res.data.message)
+        toast.success(res.data.message)
         return res
       } catch (err) {
         toast.error(err.response?.data?.message || err.message)
@@ -39,21 +52,16 @@ export const useExercisesStore = defineStore('exercises', {
     },
 
     async deleteExercise(slug) {
-      const old = [...this.exercises]
-      this.exercises = this.exercises.filter((e) => e['exerciseSlug'] !== slug)
-
       try {
-        const res = await api.patch('/exercise/delete/' + slug)
+        const res = await api.delete('/exercise/' + slug)
+        this.exercises = this.exercises.filter((exercise) => exercise.exerciseSlug !== slug)
+        console.log(res.data.message)
+        toast.success(res.data.message)
         return res
       } catch (err) {
-        this.exercises = old
         toast.error(err.response?.data?.message || err.message)
         throw err
       }
-    },
-    topicSelected(topicName) {
-      sessionStorage.setItem('currentTopic', JSON.stringify(topicName))
-      this.currentTopic = topicName
     },
   },
 })
