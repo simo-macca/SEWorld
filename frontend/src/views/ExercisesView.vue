@@ -18,9 +18,13 @@ const collapse = useCollapseStore()
 const topicStore = useTopicsStore()
 const userStore = useUsersStore()
 const exercisesStore = useExercisesStore()
-const exercises = computed(() => exercisesStore.exercises)
+const exercises = computed(() =>
+  isInstructor.value
+    ? exercisesStore.exercises
+    : exercisesStore.exercises.filter((ex) => !ex.exerciseIsDraft),
+)
 const isInstructor = computed(() => userStore.isInstructor)
-const loading = ref(false)
+const isLoading = ref(false)
 const isPublishing = ref(false)
 const isDeleting = ref(false)
 
@@ -118,11 +122,11 @@ const onHeaderSearch = (e) => setSearchQuery(e.detail.query)
 
 onMounted(async () => {
   window.addEventListener('header-search', onHeaderSearch)
-  loading.value = true
+  isLoading.value = true
   try {
     await exercisesStore.getExerciseByTopic(props.topicSlug)
   } finally {
-    loading.value = false
+    isLoading.value = false
   }
 })
 
@@ -146,9 +150,9 @@ async function confirmDelete(slug) {
 </script>
 
 <template>
-  <main class="relative min-h-screen pb-20">
+  <main>
     <!-- Mobile Search -->
-    <SearchBar v-if="collapse.isCollapse" class="mb-4 lg:hidden" />
+    <SearchBar v-if="collapse.isCollapse && !isLoading" class="mb-4 lg:hidden" />
 
     <!-- Search Results Bar -->
     <ResultSearchBar
@@ -159,7 +163,7 @@ async function confirmDelete(slug) {
     />
 
     <!-- Loading State -->
-    <div v-if="loading" class="mt-20 flex justify-center">
+    <div v-if="isLoading" class="mt-20 flex justify-center">
       <Loader />
     </div>
 
@@ -177,7 +181,7 @@ async function confirmDelete(slug) {
             </p>
           </div>
           <div
-            v-if="!loading && exercises.length > 0"
+            v-if="!isLoading && exercises.length > 0"
             class="hidden items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 sm:flex dark:bg-blue-900/20"
           >
             <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">

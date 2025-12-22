@@ -39,6 +39,7 @@ function handleClear() {
       </span>
       <div class="relative grow focus-within:z-10">
         <input
+          name="search"
           type="text"
           class="block w-full rounded-none rounded-r-md border border-gray-300 bg-white py-2 pr-10 pl-3 text-gray-900 placeholder-gray-400 transition-shadow focus:border-blue-500 focus:ring-2 focus:ring-blue-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           :class="{ 'rounded-r-none': searchValue }"

@@ -4,8 +4,9 @@ import { useThemeStore } from '@/stores/isDark.js'
 import { useUsersStore } from '@/stores/usersStore.js'
 import { Trash2, SquarePen } from 'lucide-vue-next'
 import { useTopicsStore } from '@/stores/topicsStore.js'
+import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   topic: {
     type: Object,
     required: true,

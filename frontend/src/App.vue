@@ -21,7 +21,7 @@ const theme = useThemeStore()
   />
   <div class="flex min-h-screen flex-col font-sans">
     <HeaderDesktop v-if="!$route.meta.hideNavBar" />
-    <RouterView class="px-4" />
+    <RouterView class="relative min-h-screen px-4 pb-10" />
     <ThemeToggle />
   </div>
 </template>

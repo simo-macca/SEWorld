@@ -80,7 +80,7 @@ async function deleteTopic(topicSlug) {
 
 <template>
   <!-- View of all the topics -->
-  <main class="relative min-h-full">
+  <main>
     <!-- Search Bar -->
     <SearchBar
       v-if="collapse.isCollapse && !loading"
