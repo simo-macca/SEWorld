@@ -71,8 +71,9 @@ public class ExerciseController {
         user,
         "update exercises",
         instructor -> {
-          exerciseService.updateExercise(exerciseSlug, updateExerciseDTO);
-          return ResponseEntity.ok().body(createBody("Exercise modified"));
+          ExerciseDTO updateExercise =
+              exerciseService.updateExercise(exerciseSlug, updateExerciseDTO);
+          return ResponseEntity.ok().body(createBody(updateExercise, "Exercise modified"));
         });
   }
 
@@ -84,8 +85,8 @@ public class ExerciseController {
         user,
         "publish exercises",
         instructor -> {
-          exerciseService.publishExercise(exerciseSlug);
-          return ResponseEntity.ok().body(createBody("Exercise published"));
+          ExerciseDTO publishExercise = exerciseService.publishExercise(exerciseSlug);
+          return ResponseEntity.ok().body(createBody(publishExercise, "Exercise published"));
         });
   }
 

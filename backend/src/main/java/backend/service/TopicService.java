@@ -2,6 +2,7 @@ package backend.service;
 
 import backend.controller.dto.CreateTopicDTO;
 import backend.controller.dto.TopicDTO;
+import backend.model.Exercise;
 import backend.model.Instructor;
 import backend.model.Topic;
 import backend.repository.TopicRepository;
@@ -34,15 +35,15 @@ public class TopicService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Topics not found");
     }
     return topics.stream()
-        .map(topic -> new TopicDTO(topic, secureRandom.nextDouble() * 100.0))
+        .map(topic -> new TopicDTO(topic, countProgress(topic.getExerciseList())))
         .toList();
   }
 
-  @Cacheable(value = "SEWorldCache", key = "#topicSlug")
+  @Cacheable(value = "SEWorldCache", key = "'topic-' + #topicSlug")
   @Transactional(readOnly = true)
   public TopicDTO getTopicBySlug(String topicSlug) {
     Topic topic = getBySlug(topicSlug);
-    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
+    return new TopicDTO(topic, countProgress(topic.getExerciseList()));
   }
 
   @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
@@ -51,20 +52,20 @@ public class TopicService {
     return new TopicDTO(
         topicRepository.save(
             new Topic(createTopicDTO.title(), createTopicDTO.description(), instructor)),
-        secureRandom.nextDouble() * 100.0);
+        0.0);
   }
 
   @Caching(
       evict = {
-        @CacheEvict(value = "SEWorldCache", key = "#topicSlug"), // Clear specific entry
-        @CacheEvict(value = "SEWorldCache", key = "'allTopics'") // Clear the list
+        @CacheEvict(value = "SEWorldCache", key = "'topic-' + #topicSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
       })
   @Transactional
   public TopicDTO updateTopic(String topicSlug, CreateTopicDTO topicDTO) {
     Topic topic = getBySlug(topicSlug);
     topic.update(topicDTO);
     topicRepository.save(topic);
-    return new TopicDTO(topic, secureRandom.nextDouble() * 100.0);
+    return new TopicDTO(topic, countProgress(topic.getExerciseList()));
   }
 
   @CacheEvict(value = "SEWorldCache", allEntries = true)
@@ -75,7 +76,7 @@ public class TopicService {
 
   @Caching(
       evict = {
-        @CacheEvict(value = "SEWorldCache", key = "#topicSlug"),
+        @CacheEvict(value = "SEWorldCache", key = "'topic-' + #topicSlug"),
         @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
       })
   @Transactional
@@ -90,5 +91,15 @@ public class TopicService {
             () ->
                 new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Topic not found by slug: " + slug));
+  }
+
+  private double countProgress(List<Exercise> exercises) {
+    if (exercises == null || exercises.isEmpty()) {
+      return 0.0;
+    }
+
+    long completedCount = exercises.stream().filter(Exercise::IsCompleted).count();
+
+    return ((double) completedCount / exercises.size()) * 100;
   }
 }

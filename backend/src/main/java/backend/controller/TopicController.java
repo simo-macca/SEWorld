@@ -47,7 +47,8 @@ public class TopicController {
         "create topics",
         instructor -> {
           TopicDTO newTopic = topicService.createTopic(instructor, createTopicDTO);
-          return ResponseEntity.status(HttpStatus.CREATED).body(createBody(newTopic, "Topic created"));
+          return ResponseEntity.status(HttpStatus.CREATED)
+              .body(createBody(newTopic, "Topic created"));
         });
   }
 

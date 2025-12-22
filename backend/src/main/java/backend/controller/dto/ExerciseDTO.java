@@ -10,7 +10,8 @@ public record ExerciseDTO(
     boolean exerciseIsCompleted,
     LocalDate exerciseCreatedDate,
     String exerciseSlug,
-    String exerciseOwner) {
+    String exerciseOwner,
+    String topicSlug) {
 
   public ExerciseDTO(Exercise exercise) {
     this(
@@ -20,6 +21,7 @@ public record ExerciseDTO(
         exercise.IsCompleted(),
         exercise.getExerciseCreatedDate(),
         exercise.getExerciseSlug(),
-        exercise.getExerciseOwner().getName());
+        exercise.getExerciseOwner().getName(),
+            exercise.getExerciseTopic().getTopicSlug());
   }
 }

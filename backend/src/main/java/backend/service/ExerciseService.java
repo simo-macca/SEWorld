@@ -38,13 +38,13 @@ public class ExerciseService {
     return exercises.stream().map(ExerciseDTO::new).toList();
   }
 
-  @Cacheable(value = "SEWorldCache", key = "#exerciseSlug")
+  @Cacheable(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug")
   @Transactional(readOnly = true)
   public ExerciseDTO getExerciseBySlug(String exerciseSlug) {
     return new ExerciseDTO(getBySlug(exerciseSlug));
   }
 
-  @Cacheable(value = "SEWorldCache", key = "#topicSlug")
+  @Cacheable(value = "SEWorldCache", key = "'topic-exercises-' + #topicSlug")
   @Transactional(readOnly = true)
   public List<ExerciseDTO> getAllExercisesByTopicSlug(String topicSlug) {
     List<Exercise> exercises = exerciseRepository.findAllByExerciseTopic_TopicSlug(topicSlug);
@@ -54,7 +54,7 @@ public class ExerciseService {
     return exercises.stream().map(ExerciseDTO::new).toList();
   }
 
-  @CacheEvict(value = "SEWorldCache", key = "'allExercises'") // Clear the list
+  @CacheEvict(value = "SEWorldCache", key = "'allExercises'")
   @Transactional
   public void createExercise(Instructor instructor, CreateExerciseDTO createExerciseDTO) {
     Topic topic =
@@ -70,28 +70,30 @@ public class ExerciseService {
             createExerciseDTO.title(), createExerciseDTO.description(), topic, instructor));
   }
 
-  @Caching(
-      evict = {
-        @CacheEvict(value = "SEWorldCache", key = "#exerciseSlug"), // Clear specific entry
-        @CacheEvict(value = "SEWorldCache", key = "'allExercises'") // Clear the list
-      })
+  @Caching(evict = {
+          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+  })
   @Transactional
-  public void updateExercise(String exerciseSlug, UpdateExerciseDTO updateExerciseDTO) {
+  public ExerciseDTO updateExercise(String exerciseSlug, UpdateExerciseDTO updateExerciseDTO) {
     Exercise exercise = getBySlug(exerciseSlug);
     exercise.update(updateExerciseDTO);
     exerciseRepository.save(exercise);
+    return new ExerciseDTO(exercise);
   }
 
-  @Caching(
-      evict = {
-        @CacheEvict(value = "SEWorldCache", key = "#exerciseSlug"), // Clear specific entry
-        @CacheEvict(value = "SEWorldCache", key = "'allExercises'") // Clear the list
-      })
+  @Caching(evict = {
+          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+  })
   @Transactional
-  public void publishExercise(String exerciseSlug) {
+  public ExerciseDTO publishExercise(String exerciseSlug) {
     Exercise exercise = getBySlug(exerciseSlug);
     exercise.publish();
     exerciseRepository.save(exercise);
+    return new ExerciseDTO(exercise);
   }
 
   @CacheEvict(value = "SEWorldCache", allEntries = true)
@@ -100,14 +102,16 @@ public class ExerciseService {
     exerciseRepository.deleteAll();
   }
 
-  @Caching(
-      evict = {
-        @CacheEvict(value = "SEWorldCache", key = "#exerciseSlug"),
-        @CacheEvict(value = "SEWorldCache", key = "'allExercises'")
-      })
+  @Caching(evict = {
+          @CacheEvict(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug"),
+          @CacheEvict(value = "SEWorldCache", key = "'allExercises'"),
+          @CacheEvict(value = "SEWorldCache", key = "'topic-exercises-' + #result.topicSlug")
+  })
   @Transactional
-  public void deleteExercise(String exerciseSlug) {
-    exerciseRepository.deleteByExerciseSlug(exerciseSlug);
+  public ExerciseDTO deleteExercise(String exerciseSlug) {
+    Exercise exercise = getBySlug(exerciseSlug);
+    exerciseRepository.delete(exercise);
+    return new ExerciseDTO(exercise);
   }
 
   private Exercise getBySlug(String slug) {

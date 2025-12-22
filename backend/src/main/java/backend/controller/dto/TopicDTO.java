@@ -20,10 +20,10 @@ public record TopicDTO(
 
   public TopicDTO(Topic topic, Double progress, String topicSlug) {
     this(
-            topic.getTopicTitle(),
-            topic.getTopicDescription(),
-            progress,
-            topicSlug,
-            topic.getTopicOwner().getName());
+        topic.getTopicTitle(),
+        topic.getTopicDescription(),
+        progress,
+        topicSlug,
+        topic.getTopicOwner().getName());
   }
 }
