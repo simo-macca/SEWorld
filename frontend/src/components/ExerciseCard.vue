@@ -31,6 +31,24 @@ const isDraft = computed(() => props.exercise.exerciseIsDraft)
 
 const emit = defineEmits(['show-publish', 'show-delete'])
 
+const containerClasses = computed(() => {
+  if (isInstructor.value) {
+    return isDraft.value
+      ? 'border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20'
+      : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
+  }
+
+  return isCompleted.value
+    ? 'border-green-200 bg-green-50/50 dark:border-green-900/50 dark:bg-green-950/20'
+    : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
+})
+
+const statusIndicatorClasses = computed(() => {
+  if (isInstructor.value) return isDraft.value ? 'bg-amber-500' : 'bg-blue-500'
+
+  return isCompleted.value ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+})
+
 function showPublish(exercise) {
   exerciseStore.currentExercise = exercise
   emit('show-publish')
@@ -45,28 +63,12 @@ function showDelete(topic) {
 <template>
   <div
     class="group relative overflow-hidden rounded-xl border hover:shadow-lg"
-    :class="[
-      isInstructor
-        ? isDraft
-          ? 'border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20'
-          : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800'
-        : isCompleted
-          ? 'border-green-200 bg-green-50/50 dark:border-green-900/50 dark:bg-green-950/20'
-          : 'border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800',
-    ]"
+    :class="containerClasses"
   >
     <!-- Status Indicator Bar -->
     <div
       class="absolute top-0 left-0 h-full w-1 group-hover:w-1.5"
-      :class="[
-        isInstructor
-          ? isDraft
-            ? 'bg-amber-500'
-            : 'bg-blue-500'
-          : isCompleted
-            ? 'bg-green-500'
-            : 'bg-gray-300 dark:bg-gray-600',
-      ]"
+      :class="statusIndicatorClasses"
     />
 
     <div class="p-5 pl-6">

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import SearchBar from '@/components/SearchComponents/SearchBar.vue'
 import ResultSearchBar from '@/components/SearchComponents/ResultSearchBar.vue'
-import ExerciseComponent from '@/components/ExerciseComponent.vue'
+import ExerciseCard from '@/components/ExerciseCard.vue'
 import AddButton from '@/components/UtilsComponents/AddButton.vue'
 import Loader from '@/components/UtilsComponents/Loader.vue'
 import TabFilter from '@/components/TabFilter.vue'
@@ -250,7 +250,7 @@ async function confirmDelete(slug) {
           :key="ex.exerciseDid"
           class="hover:scale-[1.01]"
         >
-          <ExerciseComponent
+          <ExerciseCard
             :exercise="ex"
             @show-publish="isPublishing = true"
             @show-delete="isDeleting = true"
