@@ -13,8 +13,6 @@ import TopicCard from '@/components/TopicComponents/TopicCard.vue'
 import TopicModal from '@/components/TopicComponents/TopicModal.vue'
 import ConfirmModal from '@/components/UtilsComponents/ConfirmModal.vue'
 import EmptyState from '@/components/UtilsComponents/EmptyState.vue'
-import { useExercisesStore } from '@/stores/exerciseStore.js'
-import { toast } from 'vue-sonner'
 
 const collapse = useCollapseStore()
 const topicsStore = useTopicsStore()
@@ -42,7 +40,7 @@ onMounted(async () => {
   window.addEventListener('header-search', onHeaderSearch)
   loading.value = true
   try {
-    await topicsStore.getTopics()
+    await topicsStore.getTopics(true)
   } catch (err) {
     console.error(err)
   } finally {

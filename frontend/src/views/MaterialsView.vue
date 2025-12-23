@@ -51,6 +51,8 @@ onMounted(async () => {
   isLoading.value = true
   try {
     await materialsStore.getMaterial()
+  } catch (err) {
+    console.error(err)
   } finally {
     isLoading.value = false
   }

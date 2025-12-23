@@ -8,7 +8,11 @@ export const useTopicsStore = defineStore('topics', {
     topics: [],
   }),
   actions: {
-    async getTopics() {
+    async getTopics(force = false) {
+      if (this.topics.length > 0 && !force) {
+        return
+      }
+
       try {
         const res = await api.get('/topic')
         this.topics = res.data.body

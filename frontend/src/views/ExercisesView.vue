@@ -2,10 +2,10 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import SearchBar from '@/components/SearchComponents/SearchBar.vue'
 import ResultSearchBar from '@/components/SearchComponents/ResultSearchBar.vue'
-import ExerciseCard from '@/components/ExerciseCard.vue'
+import ExerciseCard from '@/components/ExerciseComponent/ExerciseCard.vue'
 import AddButton from '@/components/UtilsComponents/AddButton.vue'
 import Loader from '@/components/UtilsComponents/Loader.vue'
-import TabFilter from '@/components/TabFilter.vue'
+import TabFilter from '@/components/ExerciseComponent/TabFilter.vue'
 import EmptyState from '@/components/UtilsComponents/EmptyState.vue'
 import { useCollapseStore } from '@/stores/isCollapse.js'
 import { useTopicsStore } from '@/stores/topicsStore.js'
@@ -13,6 +13,7 @@ import { useSearch } from '@/stores/useSearch.js'
 import { useUsersStore } from '@/stores/usersStore.js'
 import { useExercisesStore } from '@/stores/exerciseStore.js'
 import ConfirmModal from '@/components/UtilsComponents/ConfirmModal.vue'
+import router from '@/router/index.js'
 
 const collapse = useCollapseStore()
 const topicStore = useTopicsStore()
@@ -125,6 +126,8 @@ onMounted(async () => {
   isLoading.value = true
   try {
     await exercisesStore.getExerciseByTopic(props.topicSlug)
+  } catch (err) {
+    console.error(err)
   } finally {
     isLoading.value = false
   }
@@ -146,6 +149,14 @@ async function confirmDelete(slug) {
   } catch (err) {
     console.error(err)
   }
+}
+
+function navigateTo(topic, view) {
+  router.push({
+    name: view,
+    params: { topicSlug: topic.topicSlug },
+    state: { topicTitle: topic.topicTitle },
+  })
 }
 </script>
 
@@ -284,6 +295,10 @@ async function confirmDelete(slug) {
     />
 
     <!-- Add Button for Instructors -->
-    <AddButton v-if="isInstructor" :route="`/topics`" />
+    <AddButton
+      class="z-50"
+      v-if="isInstructor"
+      @click="navigateTo(topicStore.findTopic(topicSlug), 'Create exercise')"
+    />
   </main>
 </template>

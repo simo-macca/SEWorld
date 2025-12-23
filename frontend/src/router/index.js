@@ -41,6 +41,12 @@ const routes = [
     component: () => import('@/views/AboutView.vue'),
     meta: { hideSearchBar: true },
   },
+  {
+    path: '/exercise/create/:topicSlug',
+    name: 'Create exercise',
+    component: () => import('@/views/CreatExerciseView.vue'),
+    props: true,
+  },
 ]
 
 // Router Initialization

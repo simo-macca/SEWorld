@@ -1,9 +1,3 @@
-<script setup>
-defineProps({
-  route: { type: String },
-})
-</script>
-
 <template>
   <button class="group fixed right-5 bottom-16 cursor-pointer outline-none hover:rotate-90">
     <svg
