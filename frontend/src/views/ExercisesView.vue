@@ -14,6 +14,7 @@ import { useUsersStore } from '@/stores/usersStore.js'
 import { useExercisesStore } from '@/stores/exerciseStore.js'
 import ConfirmModal from '@/components/UtilsComponents/ConfirmModal.vue'
 import router from '@/router/index.js'
+import { toast } from 'vue-sonner'
 
 const collapse = useCollapseStore()
 const topicStore = useTopicsStore()
@@ -34,7 +35,7 @@ const props = defineProps({ topicSlug: { type: String, required: true } })
 const topicName = computed(() => {
   if (history.state?.topicTitle) return history.state.topicTitle
 
-  const topic = topicStore.findTopic(props.topicSlug)
+  const topic = topicStore.findTopicBySlug(props.topicSlug)
   if (topic) return topic.topicTitle
 
   const text = props.topicSlug || ''
@@ -145,7 +146,8 @@ async function confirmPublish(slug) {
 
 async function confirmDelete(slug) {
   try {
-    await useExercisesStore().deleteExercise(slug)
+    const data = await useExercisesStore().deleteExercise(slug)
+    toast.success(data.message)
   } catch (err) {
     console.error(err)
   }
@@ -298,7 +300,7 @@ function navigateTo(topic, view) {
     <AddButton
       class="z-50"
       v-if="isInstructor"
-      @click="navigateTo(topicStore.findTopic(topicSlug), 'Create exercise')"
+      @click="navigateTo(topicStore.findTopicBySlug(topicSlug), 'Create exercise')"
     />
   </main>
 </template>

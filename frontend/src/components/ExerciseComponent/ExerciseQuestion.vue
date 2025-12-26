@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from 'vue'
-
+import { X } from 'lucide-vue-next'
 const props = defineProps({
   questions: {
     type: Array,
@@ -148,11 +147,7 @@ const removeOption = (questionId, optionIndex) => {
       </div>
 
       <div v-if="question.type === 'multiple-choice'" class="space-y-3">
-        <div
-          v-for="(option, optIndex) in question.options"
-          :key="optIndex"
-          class="flex items-center gap-3"
-        >
+        <div v-for="optIndex in question.options" :key="optIndex" class="flex items-center gap-3">
           <div class="relative flex items-center">
             <input
               type="radio"
@@ -176,7 +171,7 @@ const removeOption = (questionId, optionIndex) => {
             @click="removeOption(question.id, optIndex)"
             class="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
           >
-            ✕
+            <X />
           </button>
         </div>
         <button
@@ -189,12 +184,15 @@ const removeOption = (questionId, optionIndex) => {
 
       <div
         v-if="question.type === 'short-answer'"
-        class="rounded-lg border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-800 dark:border-indigo-900/50 dark:bg-indigo-900/20 dark:text-indigo-200"
+        class="flex flex-col items-start justify-center gap-y-2 rounded-lg border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-800 dark:border-indigo-900/50 dark:bg-indigo-900/20 dark:text-indigo-200"
       >
-        <p class="flex items-center gap-2">
-          <span class="text-xl">ℹ️</span>
-          Students will be provided with a text area to write their answer manually.
-        </p>
+        <label> Enter a possible answer </label>
+        <input
+          type="text"
+          placeholder="Answer"
+          v-model="question.correctAnswer"
+          class="w-full flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 transition-all outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:focus:border-indigo-400"
+        />
       </div>
     </div>
   </div>

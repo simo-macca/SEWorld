@@ -56,18 +56,19 @@ public class ExerciseService {
 
   @CacheEvict(value = "exerciseCache", key = "'allExercises'")
   @Transactional
-  public void createExercise(Instructor instructor, CreateExerciseDTO createExerciseDTO) {
+  public ExerciseDTO createExercise(Instructor instructor, String topicSlug, CreateExerciseDTO createExerciseDTO) {
     Topic topic =
         topicRepository
-            .getByTopicSlug(createExerciseDTO.topicSlug())
+            .getByTopicSlug(topicSlug)
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "Topic not found by slug: " + createExerciseDTO.topicSlug()));
-    exerciseRepository.save(
-        new Exercise(
-            createExerciseDTO.title(), createExerciseDTO.description(), topic, instructor));
+                        "Topic not found by slug: " + topicSlug));
+    Exercise exercise =
+        new Exercise(createExerciseDTO.title(), createExerciseDTO.description(), topic, instructor);
+    exerciseRepository.save(exercise);
+    return new ExerciseDTO(exercise);
   }
 
   @Caching(

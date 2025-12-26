@@ -13,12 +13,12 @@ export const useUsersStore = defineStore('users', {
       try {
         const res = await api.get('/me')
         this.loggedIn = true
-        console.log(res.data.message)
         this.user = res.data.body
         this.isInstructor = res.data.body.role === 'Instructor'
+        console.log(res.data.message)
         return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to retrieve user. Please try again.')
         throw err
       }
     },

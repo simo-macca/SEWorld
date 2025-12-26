@@ -24,7 +24,7 @@ const props = defineProps({ topicSlug: { type: String, default: '' } })
 const topicName = computed(() => {
   if (history.state?.topicTitle) return history.state.topicTitle
 
-  const topic = topicStore.findTopic(props.topicSlug)
+  const topic = topicStore.findTopicBySlug(props.topicSlug)
   if (topic) return topic.topicTitle
 
   const text = props.topicSlug || 'Materials'

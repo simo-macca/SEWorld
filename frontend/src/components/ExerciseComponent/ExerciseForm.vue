@@ -7,6 +7,7 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  currentTopic: String,
 })
 
 defineEmits(['update:title', 'update:description', 'update:selectedTopic'])
@@ -54,7 +55,9 @@ defineEmits(['update:title', 'update:description', 'update:selectedTopic'])
           @change="$emit('update:selectedTopic', $event.target.value)"
           class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 transition-all outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-indigo-400"
         >
-          <option value="" disabled class="text-gray-400">Select a topic</option>
+          <option value="" disabled class="text-gray-400">
+            {{ currentTopic || 'Select a topic' }}
+          </option>
           <option v-for="topic in topics" :key="topic.id" :value="topic.id">
             {{ topic.topicTitle }}
           </option>

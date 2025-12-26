@@ -44,7 +44,7 @@ const routes = [
   {
     path: '/exercise/create/:topicSlug',
     name: 'Create exercise',
-    component: () => import('@/views/CreatExerciseView.vue'),
+    component: () => import('@/views/CreateExerciseView.vue'),
     props: true,
   },
 ]

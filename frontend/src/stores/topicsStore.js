@@ -17,9 +17,8 @@ export const useTopicsStore = defineStore('topics', {
         const res = await api.get('/topic')
         this.topics = res.data.body
         console.log(res.data.message)
-        return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to retrieve topic. Please try again.')
         throw err
       }
     },
@@ -33,9 +32,8 @@ export const useTopicsStore = defineStore('topics', {
 
         console.log(res.data.message)
         toast.success(res.data.message)
-        return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to create topic. Please try again.')
         throw err
       }
     },
@@ -57,9 +55,8 @@ export const useTopicsStore = defineStore('topics', {
 
         console.log(res.data.message)
         toast.success(res.data.message)
-        return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to update topic. Please try again.')
         throw err
       }
     },
@@ -70,16 +67,19 @@ export const useTopicsStore = defineStore('topics', {
         this.topics = this.topics.filter((topic) => topic.topicSlug !== slug)
         console.log(res.data.message)
         toast.success(res.data.message)
-        return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to delete topic. Please try again.')
         throw err
       }
     },
   },
   getters: {
-    findTopic: (state) => (slug) => {
+    findTopicBySlug: (state) => (slug) => {
       return state.topics.find((t) => t.topicSlug === slug)
+    },
+
+    findTopicByName: (state) => (name) => {
+      return state.topics.find((t) => t.topicTitle === name)
     },
   },
 })

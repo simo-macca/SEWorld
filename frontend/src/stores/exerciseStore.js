@@ -16,7 +16,8 @@ export const useExercisesStore = defineStore('exercises', {
         )
         console.log(res.data.message)
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to retrieve exercise. Please try again.')
+        throw err
       }
     },
 
@@ -28,7 +29,19 @@ export const useExercisesStore = defineStore('exercises', {
         )
         console.log(res.data.message)
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to retrieve exercise. Please try again.')
+        throw err
+      }
+    },
+
+    async createExercise(slug, body) {
+      try {
+        const res = await api.post('/exercise/' + slug, body)
+        console.log(res.data.message)
+        return res.data
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to create exercise. Please try again.')
+        throw err
       }
     },
 
@@ -44,9 +57,8 @@ export const useExercisesStore = defineStore('exercises', {
 
         console.log(res.data.message)
         toast.success(res.data.message)
-        return res
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to update exercise. Please try again.')
         throw err
       }
     },
@@ -56,10 +68,9 @@ export const useExercisesStore = defineStore('exercises', {
         const res = await api.delete('/exercise/' + slug)
         this.exercises = this.exercises.filter((exercise) => exercise.exerciseSlug !== slug)
         console.log(res.data.message)
-        toast.success(res.data.message)
-        return res
+        return res.data
       } catch (err) {
-        toast.error(err.response?.data?.message || err.message)
+        toast.error(err.response?.data?.message || 'Failed to delete exercise. Please try again.')
         throw err
       }
     },

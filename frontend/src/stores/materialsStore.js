@@ -82,6 +82,7 @@ console.log('Ciao Markdown!')
       } catch (err) {
         console.error(err)
         toast.error(err.response?.data?.message || err.message)
+        throw err
       }
     },
   },

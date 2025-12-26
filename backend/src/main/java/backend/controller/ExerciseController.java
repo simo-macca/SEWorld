@@ -48,16 +48,18 @@ public class ExerciseController {
     return ResponseEntity.ok(createBody(exercises, "Exercises found"));
   }
 
-  @PostMapping
+  @PostMapping("/{slug}")
   public ResponseEntity<?> createExercise(
-      @AuthenticationPrincipal Object principal, @RequestBody CreateExerciseDTO createExerciseDTO) {
+      @AuthenticationPrincipal Object principal,@PathVariable("slug") String topicSlug, @RequestBody CreateExerciseDTO createExerciseDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
     return withInstructor(
         user,
         "create exercises",
         instructor -> {
-          exerciseService.createExercise(instructor, createExerciseDTO);
-          return ResponseEntity.status(HttpStatus.CREATED).body(createBody("Exercise created"));
+          ExerciseDTO exerciseCreate =
+              exerciseService.createExercise(instructor, topicSlug, createExerciseDTO);
+          return ResponseEntity.status(HttpStatus.CREATED)
+              .body(createBody(exerciseCreate, "Exercise created"));
         });
   }
 
