@@ -4,15 +4,15 @@ services:
     container_name: SEWorld-Postgres
     restart: always
     environment:
-      POSTGRES_DB: SEWorld
-      POSTGRES_USER: simo_macca
-      POSTGRES_PASSWORD: Macauth.real
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U simo_macca -d SEWorld"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -43,11 +43,13 @@ services:
         condition: service_healthy
       ollama:
         condition: service_healthy
+    env_file:
+      .env
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/SEWorld
-      SPRING_DATASOURCE_USERNAME: simo_macca
-      SPRING_DATASOURCE_PASSWORD: Macauth.real
-      SPRING_AI_OLLAMA_BASE_URL: http://ollama:11434
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_AI_OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
     ports:
       - "8080:8080"
 

@@ -27,7 +27,7 @@ public class TopicService {
     this.topicRepository = topicRepository;
   }
 
-  @Cacheable(value = "SEWorldCache", key = "'allTopics'")
+  @Cacheable(value = "topicCache", key = "'allTopics'")
   @Transactional(readOnly = true)
   public List<TopicDTO> getAllTopics() {
     List<Topic> topics = topicRepository.findAll();
@@ -39,14 +39,14 @@ public class TopicService {
         .toList();
   }
 
-  @Cacheable(value = "SEWorldCache", key = "'topic-' + #topicSlug")
+  @Cacheable(value = "topicCache", key = "'topic-' + #topicSlug")
   @Transactional(readOnly = true)
   public TopicDTO getTopicBySlug(String topicSlug) {
     Topic topic = getBySlug(topicSlug);
     return new TopicDTO(topic, countProgress(topic.getExerciseList()));
   }
 
-  @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
+  @CacheEvict(value = "topicCache", key = "'allTopics'")
   @Transactional
   public TopicDTO createTopic(Instructor instructor, CreateTopicDTO createTopicDTO) {
     return new TopicDTO(
@@ -57,8 +57,8 @@ public class TopicService {
 
   @Caching(
       evict = {
-        @CacheEvict(value = "SEWorldCache", key = "'topic-' + #topicSlug"),
-        @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
+        @CacheEvict(value = "topicCache", key = "'topic-' + #topicSlug"),
+        @CacheEvict(value = "topicCache", key = "'allTopics'")
       })
   @Transactional
   public TopicDTO updateTopic(String topicSlug, CreateTopicDTO topicDTO) {
@@ -68,7 +68,7 @@ public class TopicService {
     return new TopicDTO(topic, countProgress(topic.getExerciseList()));
   }
 
-  @CacheEvict(value = "SEWorldCache", allEntries = true)
+  @CacheEvict(value = "topicCache", allEntries = true)
   @Transactional
   public void deleteAllTopics() {
     topicRepository.deleteAll();
@@ -76,8 +76,8 @@ public class TopicService {
 
   @Caching(
       evict = {
-        @CacheEvict(value = "SEWorldCache", key = "'topic-' + #topicSlug"),
-        @CacheEvict(value = "SEWorldCache", key = "'allTopics'")
+        @CacheEvict(value = "topicCache", key = "'topic-' + #topicSlug"),
+        @CacheEvict(value = "topicCache", key = "'allTopics'")
       })
   @Transactional
   public void deleteTopicBySlug(String topicSlug) {

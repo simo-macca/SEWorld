@@ -46,7 +46,7 @@ public class QuestionService {
             .collect(Collectors.toMap(QuestionMapper::getSupportedEntity, Function.identity()));
   }
 
-  @Cacheable(value = "SEWorldCache", key = "'allQuestions'")
+  @Cacheable(value = "questionCache", key = "'allQuestions'")
   @Transactional(readOnly = true)
   public List<QuestionDTO> getAllQuestions() {
     List<AbstractQuestion> questions = questionRepository.findAll();
@@ -57,7 +57,7 @@ public class QuestionService {
     return questions.stream().map(this::convertToDto).toList();
   }
 
-  @Cacheable(value = "SEWorldCache", key = "'exercise-' + #exerciseSlug + '-questions'")
+  @Cacheable(value = "questionCache", key = "'exercise-' + #exerciseSlug + '-questions'")
   @Transactional(readOnly = true)
   public List<QuestionDTO> getAllQuestionsByExercise(String exerciseSlug) {
     List<AbstractQuestion> questions =
@@ -69,7 +69,7 @@ public class QuestionService {
     return questions.stream().map(this::convertToDto).toList();
   }
 
-  @CacheEvict(value = "SEWorldCache", allEntries = true)
+  @CacheEvict(value = "questionCache", allEntries = true)
   @Transactional
   public List<QuestionDTO> createQuestion(
       String exerciseSlug, List<CreateQuestionDTO> questionDTO) {
@@ -100,7 +100,7 @@ public class QuestionService {
         .toList();
   }
 
-  @CacheEvict(value = "SEWorldCache", allEntries = true)
+  @CacheEvict(value = "questionCache", allEntries = true)
   @Transactional
   public List<QuestionDTO> updateQuestions(List<UpdateQuestionDTO> updates) {
     return updates.stream()
@@ -108,7 +108,7 @@ public class QuestionService {
         .toList();
   }
 
-  @CacheEvict(value = "SEWorldCache", allEntries = true)
+  @CacheEvict(value = "questionCache", allEntries = true)
   @Transactional
   public void deleteQuestions(List<String> questionsSlug) {
     questionRepository.deleteAllByQuestionSlugIn(questionsSlug);

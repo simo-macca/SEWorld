@@ -8,13 +8,15 @@ spring:
   cache:
     type: caffeine
     cache-names:
-      - SEWorldCache
+      - topicCache
+      - exerciseCache
+      - questionCache
     caffeine:
       spec: maximumSize=500,expireAfterWrite=60m # expire after 60 minutes
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/SEWorld}
-    username: ${SPRING_DATASOURCE_USERNAME:simo_macca}
-    password: ${SPRING_DATASOURCE_PASSWORD:Macauth.real}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/${DB_NAME}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD}}
   sql:
     init:
       mode: always
@@ -38,6 +40,14 @@ spring:
             client-id: test-client
             authorization-grant-type: authorization_code
             scope: openid
+          # google
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+          # github
+          github:
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
         provider:
           switch-edu-id:
             issuer-uri: https://auth.dev.si.usi.ch/auth/realms/simurbs
