@@ -4,6 +4,7 @@ import static backend.Utils.createBody;
 import static backend.Utils.withInstructor;
 
 import backend.controller.dto.*;
+import backend.controller.dto.create.CreateTopicDTO;
 import backend.model.AbstractUser;
 import backend.service.AbstractUserService;
 import backend.service.TopicService;

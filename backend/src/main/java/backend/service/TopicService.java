@@ -1,7 +1,7 @@
 package backend.service;
 
-import backend.controller.dto.CreateTopicDTO;
 import backend.controller.dto.TopicDTO;
+import backend.controller.dto.create.CreateTopicDTO;
 import backend.model.Exercise;
 import backend.model.Instructor;
 import backend.model.Topic;

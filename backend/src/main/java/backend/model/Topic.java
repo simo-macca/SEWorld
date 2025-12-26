@@ -1,6 +1,6 @@
 package backend.model;
 
-import backend.controller.dto.CreateTopicDTO;
+import backend.controller.dto.create.CreateTopicDTO;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import java.util.ArrayList;

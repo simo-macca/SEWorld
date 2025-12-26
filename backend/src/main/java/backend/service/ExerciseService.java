@@ -1,8 +1,8 @@
 package backend.service;
 
-import backend.controller.dto.CreateExerciseDTO;
 import backend.controller.dto.ExerciseDTO;
 import backend.controller.dto.UpdateExerciseDTO;
+import backend.controller.dto.create.CreateExerciseDTO;
 import backend.model.Exercise;
 import backend.model.Instructor;
 import backend.model.Topic;

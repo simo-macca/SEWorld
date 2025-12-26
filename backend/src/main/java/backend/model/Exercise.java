@@ -4,6 +4,8 @@ import backend.controller.dto.UpdateExerciseDTO;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -42,6 +44,13 @@ public class Exercise {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "exercise_topic", updatable = false, nullable = false)
   private Topic exerciseTopic;
+
+  @OneToMany(
+      mappedBy = "questionExercise",
+      fetch = FetchType.LAZY,
+      cascade = CascadeType.REMOVE,
+      orphanRemoval = true)
+  private List<AbstractQuestion> questionList = new ArrayList<>();
 
   protected Exercise() {}
 

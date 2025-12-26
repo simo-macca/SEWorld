@@ -3,9 +3,9 @@ package backend.controller;
 import static backend.Utils.*;
 
 import backend.controller.dto.ApiResponse;
-import backend.controller.dto.CreateExerciseDTO;
 import backend.controller.dto.ExerciseDTO;
 import backend.controller.dto.UpdateExerciseDTO;
+import backend.controller.dto.create.CreateExerciseDTO;
 import backend.model.AbstractUser;
 import backend.service.AbstractUserService;
 import backend.service.ExerciseService;
