@@ -57,7 +57,7 @@ public class QuestionController {
         });
   }
 
-  @PatchMapping("")
+  @PatchMapping
   public ResponseEntity<?> updateQuestion(
       @AuthenticationPrincipal Object principal, @RequestBody List<UpdateQuestionDTO> questionDTO) {
     AbstractUser user = abstractUserService.createOrFindUser(principal);
