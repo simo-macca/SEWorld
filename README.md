@@ -35,5 +35,4 @@ yarn dev
 
 ---
 
----
 **Note:** For more detailed instructions on development setups, please refer to the specific READMEs in the [Backend Directory](./backend/README.md) and [Frontend Directory](./frontend/README.md).
