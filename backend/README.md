@@ -1,37 +1,61 @@
-# Readme
+# SEWorld Backend
 
-Software Atelier 4: Lab lecture 02.
+This is the backend service for the SEWorld project, built with Spring Boot 3.4.3 and Java 21. It provides a RESTful API, handles security via OAuth2, integrates with PostgreSQL for persistence, and leverages Spring AI interacting with a local Ollama instance.
 
-**SPRING BOOT**
+## Tech Stack
+* **Java:** 21
+* **Framework:** Spring Boot 3.4.3
+* **Database:** PostgreSQL 17 + Spring Data JPA
+* **AI Integration:** Spring AI + Ollama (`deepseek-llm` model)
+* **Build Tool:** Gradle
 
-# Authors
+## Running with Docker (Recommended)
 
-Alessandro Giagnorio, Jeferson Morales Mariciano, Marco Raglianti, Edoardo Riggio, Aron Fiechter, Stefano Campanella, Andrea Mocci
+The easiest way to run the backend and its dependencies is using Docker Compose. This starts PostgreSQL, Ollama, and the Spring Boot App.
 
-# Original Documentation from Spring Template
+```bash
+docker-compose up --build
+```
 
-## Getting Started
+### Services Started:
 
-### Reference Documentation
-For further reference, please consider the following sections:
+1. **Postgres (`SA4-Postgres`):** Running on port `5432`.
+2. **Ollama (`SA4-Ollama`):** Running on port `11434`. (Automatically pulls the `deepseek-llm` model on startup).
+3. **Spring Boot App (`SA4-Backend`):** Running on port `8080`.
 
-* [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.0.4/gradle-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.0.4/gradle-plugin/reference/html/#build-image)
-* [Spring Boot DevTools](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#using.devtools)
-* [Spring Data MongoDB](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#data.nosql.mongodb)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.0.4/reference/htmlsingle/#web)
+## Local Development (Without App Container)
 
-### Guides
-The following guides illustrate how to use some features concretely:
+If you prefer to run the Spring Boot application locally via your IDE or Gradle for faster debugging, you can run only the dependent services in Docker:
 
-* [Accessing Data with MongoDB](https://spring.io/guides/gs/accessing-data-mongodb/)
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+1. Start only the Database and AI containers:
+    ```bash
+    docker-compose up -d postgres ollama
+    ```
 
-### Additional Links
-These additional references should also help you:
+2. Run the application using the Gradle wrapper:
+    ```bash
+    ./gradlew bootRun
+    ```
 
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+### Default Environment Variables
 
+If running locally, ensure your application points to the correct resources (already configured in `docker-compose.yml`):
+
+* `SPRING_DATASOURCE_URL`: jdbc:postgresql://localhost:5432/users_tutorial_lab02
+* `SPRING_DATASOURCE_USERNAME`: power_rangers
+* `SPRING_DATASOURCE_PASSWORD`: usi_2025_sa4_project
+* `SPRING_AI_OLLAMA_BASE-URL`: http://localhost:11434
+
+## Testing and Formatting
+
+To run tests (including embedded PostgreSQL tests) and generate a Jacoco coverage report:
+
+```bash
+./gradlew test
+```
+
+To format your code using Spotless (Google Java Format):
+
+```bash
+./gradlew spotlessApply
+```
