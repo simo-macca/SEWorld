@@ -1,0 +1,36 @@
+/* Root Variables for Easy Theming */
+:root {
+  --primary-bg-color: #0a192f;
+  --primary-bg-color-dark: #0d2240;
+  --primary-bg-color-mid-dark: #0a1930;
+  --primary-bg-color-mid-deep-dark: #071120;
+  --primary-bg-color-deep-dark: #03080f;
+  --primary-text-color: #e6f1ff;
+  --secondary-text-color: #8892b0;
+  --accent-color-1: #ee7724;
+  --accent-color-1-opacity-8: rgba(238, 119, 36, 0.8);
+  --accent-color-1-opacity-2: rgba(238, 119, 36, 0.1);
+  --accent-color-2: #dd3675;
+  --accent-color-3: #b44593;
+  --transition-speed: 0.3s;
+
+  --main-gradient-top: linear-gradient(to top, #ee7724, #d8363a, #dd3675, #b44593);
+  --main-gradient-right: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+  --main-gradient-bottom: linear-gradient(to bottom, #ee7724, #d8363a, #dd3675, #b44593);
+  --main-gradient-left: linear-gradient(to left, #ee7724, #d8363a, #dd3675, #b44593);
+
+  --header-height: 110px;
+}
+
+/* Reset and Base Styling */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scrollbar-gutter: stable;
+}

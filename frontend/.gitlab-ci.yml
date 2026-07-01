@@ -1,0 +1,29 @@
+image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:23
+
+stages:
+  - install
+  - build
+  - release
+  - deploy
+
+cache:
+  paths:
+    - ./node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - yarn install
+  artifacts:
+    expire_in: 2 hours
+    paths:
+      - ./node_modules/
+
+build:
+  stage: build
+  script:
+    - yarn build
+  artifacts:
+    expire_in: 2 hours
+    paths:
+      - ./dist/

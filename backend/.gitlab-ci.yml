@@ -1,0 +1,140 @@
+# This is the CI file to be tested with the sample repo, show compile, build, and documentation generation with javadoc
+image: gradle:jdk21-jammy
+
+# Disable the Gradle daemon for Continuous Integration servers as correctness
+# is usually a priority over speed in CI environments. Using a fresh
+# runtime for each build is more reliable since the runtime is completely
+# isolated from any previous builds.
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  # We define the folder for the Gradle user home to use the local cache
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  # DO NOT TOUCH THESE
+  SONARQUBE_PROJECT_KEY: ${CI_PROJECT_ID}:${CI_COMMIT_REF_SLUG}
+  SONARQUBE_PROJECT_NAME: sa4-2025/team1-powerrangers/backend:${CI_COMMIT_REF_SLUG}
+  SONARQUBE_GROUP_ID: AZX2fUUeFpucPYjQN8B9
+  # Spring Boot Database Configuration
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/users_tutorial_lab02
+  SPRING_DATASOURCE_USERNAME: power_rangers
+  SPRING_DATASOURCE_PASSWORD: usi_2025_sa4_project
+
+  # PostgreSQL Configuration for CI/CD
+  POSTGRES_DB: users_tutorial_lab02
+  POSTGRES_USER: power_rangers
+  POSTGRES_PASSWORD: usi_2025_sa4_project
+  POSTGRES_HOST_AUTH_METHOD: trust
+
+# Define services (PostgreSQL)
+services:
+  - postgres:15
+
+# Enabling the cache to reduce build times
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle
+    - build
+
+stages:
+  - build
+  - test
+  - quality
+  - deploy
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - echo "Waiting for PostgreSQL to be ready..."
+  - sleep 10
+
+compile_job:
+  stage: build
+  script: gradle compileJava
+  artifacts:
+    when: always
+    paths:
+      - build/classes
+    expire_in: 1 hour
+
+javadoc_job:
+  stage: build
+  script: gradle javadoc
+  artifacts:
+    when: always
+    paths:
+      - build/docs
+    expire_in: 1 hour
+
+test_job:
+  stage: test
+  script: gradle test
+  artifacts:
+    when: always
+    paths:
+      - build/reports/jacoco/test/*
+      - build/reports/tests/*
+      - build/test-results/test/TEST-*
+      - build/classes
+    reports:
+      junit: [ build/reports/jacoco/test/jacocoTestReport.xml, build/test-results/test/**/TEST-*.xml ]
+    expire_in: 1 hour
+  dependencies:
+      - compile_job
+
+.sonarqube-check:
+  stage: quality
+  image:
+    name: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/sonarsource/sonar-scanner-cli:5.0.1
+    entrypoint: [ '' ]
+  variables:
+    SONAR_USER_HOME: '${CI_PROJECT_DIR}/.sonar' # Defines the location of the analysis task cache
+    GIT_DEPTH: '0' # Tells git to fetch all the branches of the project, required by the analysis task
+  cache:
+    key: '${CI_JOB_NAME}'
+    paths:
+      - .sonar/cache
+
+# This sonarqube job can be manually run on feature branches.
+# It is allowed to fail.
+sonarqube-check-branch:
+  extends: .sonarqube-check
+  tags:
+    - ci-dev-runner
+  rules:
+    - if: ($CI_PIPELINE_SOURCE == 'push' && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH && $CI_COMMIT_BRANCH != "main")
+  when: manual
+  allow_failure: true
+  script:
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/projects/create?name=${SONARQUBE_PROJECT_NAME}&project=${SONARQUBE_PROJECT_KEY}\" || echo Project already exists"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/permissions/add_group?projectKey=${SONARQUBE_PROJECT_KEY}&groupId=${SONARQUBE_GROUP_ID}&permission=user\" || echo Project permission already set or has error"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/permissions/add_group?projectKey=${SONARQUBE_PROJECT_KEY}&groupId=${SONARQUBE_GROUP_ID}&permission=codeviewer\" || echo Project permission already set or has error"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/qualityprofiles/add_project?language=java&project=${SONARQUBE_PROJECT_KEY}&qualityProfile=SA4%202024%20Indigo%20Way\" || echo Project permission already set or has error"
+    - sonar-scanner
+
+## This sonarqube job is run on main and dev, and it's automatic.
+## Moreover, it is *not* allowed to fail - if the Quality Gate fails,
+## the pipeline fails.
+sonarqube-check:
+  extends: .sonarqube-check
+  tags:
+    - ci-dev-runner
+  rules:
+    - if: ($CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_BRANCH == "main")
+  allow_failure: false
+  script:
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/projects/create?name=${SONARQUBE_PROJECT_NAME}&project=${SONARQUBE_PROJECT_KEY}\" || echo Project already exists"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/permissions/add_group?projectKey=${SONARQUBE_PROJECT_KEY}&groupId=${SONARQUBE_GROUP_ID}&permission=user\" || echo Project permission already set or has error"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/permissions/add_group?projectKey=${SONARQUBE_PROJECT_KEY}&groupId=${SONARQUBE_GROUP_ID}&permission=codeviewer\" || echo Project permission already set or has error"
+    - "curl -u ${SONAR_TOKEN}: -X POST \"https://lab.si.usi.ch/sonarqube/api/qualityprofiles/add_project?language=java&project=${SONARQUBE_PROJECT_KEY}&qualityProfile=SA4%202024%20Indigo%20Way\" || echo Project permission already set or has error"
+    - sonar-scanner
+
+
+# Deploy javadoc documentation in the public folder on GitLab
+pages:
+  stage: deploy
+  script:
+    - mv build/docs/javadoc public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
