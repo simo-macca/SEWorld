@@ -6,7 +6,7 @@
 [![Ollama](https://img.shields.io/badge/AI-Ollama%20%28DeepSeek--LLM%29-black.svg)](https://ollama.ai/)
 [![Vue 3](https://img.shields.io/badge/Vue-3.5-emerald.svg)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-purple.svg)](https://vitejs.dev/)
-[![License](https://img.shields.io/badge/License-Academic-lightgrey.svg)]()
+![License](https://img.shields.io/badge/License-Academic-lightgrey.svg)
 
 **SEWorld** is a full-stack, AI-augmented educational platform developed for Software Engineering courses at USI (Università della Svizzera italiana). It delivers an interactive learning environment for students and comprehensive management tools for instructors, including course topic progression, multi-format exercises, instant feedback, performance analytics, and automated AI assistance powered by local Large Language Models (LLMs).
 
