@@ -166,7 +166,7 @@ Default values are specified in `src/main/resources/application.yml` and can be 
 |:---|:---|:---|
 | `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/users_tutorial_lab02` | PostgreSQL JDBC connection URL |
 | `SPRING_DATASOURCE_USERNAME` | `power_rangers` | PostgreSQL username |
-| `SPRING_DATASOURCE_PASSWORD` | `usi_2025_sa4_project` | PostgreSQL password |
+| `SPRING_DATASOURCE_PASSWORD` | `<sa4_project_password>` | PostgreSQL password |
 | `SPRING_AI_OLLAMA_BASE-URL` | `http://localhost:11434` | Ollama API base URL |
 
 ### Other Notable Properties
