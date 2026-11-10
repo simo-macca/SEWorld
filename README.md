@@ -1,14 +1,17 @@
 # SEWorld
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
-[![Ollama](https://img.shields.io/badge/AI-Ollama%20%28DeepSeek--LLM%29-black.svg)](https://ollama.ai/)
-[![Vue 3](https://img.shields.io/badge/Vue-3.5-emerald.svg)](https://vuejs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.2-purple.svg)](https://vitejs.dev/)
-![License](https://img.shields.io/badge/License-Academic-lightgrey.svg)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-6db33f.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://adoptium.net/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791.svg)](https://www.postgresql.org/)
+[![Ollama](https://img.shields.io/badge/AI-Ollama%20%28deepseek--llm%29-black.svg)](https://ollama.com/)
+[![Vue 3](https://img.shields.io/badge/Vue-3.5-42b883.svg)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646cff.svg)](https://vitejs.dev/)
+![University Project](https://img.shields.io/badge/USI-University%20Project-lightgrey.svg)
 
-**SEWorld** is a full-stack, AI-augmented educational platform developed for Software Engineering courses at USI (Università della Svizzera italiana). It delivers an interactive learning environment for students and comprehensive management tools for instructors, including course topic progression, multi-format exercises, instant feedback, performance analytics, and automated AI assistance powered by local Large Language Models (LLMs).
+**SEWorld** is a full-stack, AI-assisted learning platform for Software Engineering courses. Students work through course topics, study materials, solve auto-graded exercises and ask questions to an AI tutor that runs on a local Large Language Model (LLM). Instructors write and publish content, review what the AI generates before students see it, and follow class performance through analytics.
+
+> [!NOTE]
+> **University project.** SEWorld was built by a student team as coursework for the *Software Atelier 4 (SA4)* course of the Bachelor in Informatics at [USI – Università della Svizzera italiana](https://www.usi.ch/) (2025). The team worked in Scrum-style sprints; the user stories, quality requirements and validation reports for each sprint are in [`batches/`](./batches). The project is a teaching prototype and is not maintained as a production service.
 
 ---
 
@@ -17,32 +20,34 @@
 - [Features](#features)
 - [System Architecture](#system-architecture)
 - [Repository Structure](#repository-structure)
-- [Quick Start Guide](#quick-start-guide)
+- [Quick Start](#quick-start)
   - [Prerequisites](#prerequisites)
-  - [Option A: Containerized Backend + Local Frontend (Recommended)](#option-a-containerized-backend--local-frontend-recommended)
+  - [Option A: Backend in Docker + Local Frontend (Recommended)](#option-a-backend-in-docker--local-frontend-recommended)
   - [Option B: Full Local Development](#option-b-full-local-development)
-  - [Option C: Fully Containerized Backend via Docker](#option-c-fully-containerized-backend-via-docker)
+  - [Stopping the Stack](#stopping-the-stack)
 - [Default Ports and Services](#default-ports-and-services)
-- [Authentication Flow](#authentication-flow)
-- [Submodule Documentation](#submodule-documentation)
+- [Authentication](#authentication)
+- [Further Documentation](#further-documentation)
 
 ---
 
 ## Features
 
 ### For Students
-- **Curriculum & Topics:** Navigate course topics, track individual completion rates, and access learning materials (PDFs, code files, slides, external links).
-- **Interactive Exercises:** Solve exercises with various question formats (Multiple Choice, True/False, Short Answer) with multiple attempts.
-- **Instant Grading & Feedback:** Receive real-time scoring, answer validations, and detailed solution explanations.
-- **AI-Powered Tutoring ("My AI"):** Ask contextual questions about course materials and exercise answers using an integrated local AI model (`deepseek-llm`).
-- **Personal Analytics:** View grade distributions, completion progress bars, and historical attempt performance.
+
+- **Topics & Materials:** Browse course topics, track how much of each topic you have completed, and open learning materials (PDFs, source code, slides, external links).
+- **Interactive Exercises:** Answer Multiple Choice, True/False and Short Answer questions, with multiple attempts allowed.
+- **Instant Grading & Feedback:** Get your score right after submitting, see which answers were right or wrong, and read the explanation for each question.
+- **AI Tutor ("My AI"):** Ask questions about a material or about your exercise answers. A local model (`deepseek-llm` via Ollama) answers them.
+- **Personal Analytics:** See your grade distribution, completion progress and past attempt results.
 
 ### For Instructors
-- **Course Administration:** Create, update, and organize topics and study materials with file upload support (up to 20MB).
-- **Exercise Management:** Author exercises in draft mode, add multiple question variants, preview from a student perspective, and publish when ready.
-- **AI Question Variant Generator:** Automatically generate alternative question variations using Spring AI and Ollama.
-- **AI Evaluation Pipeline:** Review, accept, or deny AI-generated explanations and exercise responses before they become visible to students.
-- **Cohort Analytics:** Inspect aggregated student attempt statistics, question difficulty metrics, and per-topic performance.
+
+- **Course Management:** Create, edit and organize topics and materials, with file uploads up to 20 MB.
+- **Exercise Authoring:** Write exercises as drafts, add question variants, preview them as a student would, and publish when ready.
+- **AI Question Variants:** Generate alternative versions of a question with Spring AI and Ollama.
+- **AI Review Workflow:** Accept or reject AI-generated explanations and answers before students can see them.
+- **Class Analytics:** See aggregated attempt statistics, how difficult each question is, and results per topic.
 
 ---
 
@@ -50,33 +55,33 @@
 
 ```
                       +---------------------------------------+
-                      |       Client Browser (User)          |
+                      |         Client Browser (User)         |
                       +-------------------+-------------------+
                                           |
-                        HTTP / Web UI     | (Port 3000)
+                                          | HTTP (port 3000)
                                           v
                       +---------------------------------------+
-                      |         Frontend (Vue 3 + Vite)       |
-                      |  - Pinia State  - Bootstrap Vue Next  |
-                      |  - Chart.js     - Md-Editor-V3        |
+                      |        Frontend (Vue 3 + Vite)        |
+                      |  - Pinia            - Bootstrap Vue   |
+                      |  - Chart.js         - md-editor-v3    |
                       +-------------------+-------------------+
                                           |
-                      Vite Proxy / CORS   | REST API (/api/auth/**)
-                      (Port 8080)         | OAuth2 SWITCH Edu-ID
+                                          | REST API /api/auth/** (port 8080)
+                                          | OAuth2 login via SWITCH edu-ID
                                           v
                       +---------------------------------------+
                       |      Backend (Spring Boot 3.4.3)      |
                       |  - Spring Security (OAuth2 / JWT)     |
                       |  - Spring Data JPA (Hibernate)        |
-                      |  - Spring AI (Ollama Client)          |
+                      |  - Spring AI (Ollama client)          |
                       +---------+-------------------+---------+
                                 |                   |
-               JDBC (Port 5432) |                   | HTTP (Port 11434)
+                JDBC (port 5432)|                   | HTTP (port 11434)
                                 v                   v
        +----------------------------+   +----------------------------+
-       |   PostgreSQL 17 Database   |   |   Ollama LLM Engine        |
-       |  (Container: SA4-Postgres) |   |  (Container: SA4-Ollama)   |
-       |  users_tutorial_lab02      |   |  Model: deepseek-llm       |
+       |   PostgreSQL 17            |   |   Ollama                   |
+       |   container: SA4-Postgres  |   |   container: SA4-Ollama    |
+       |   db: users_tutorial_lab02 |   |   model: deepseek-llm      |
        +----------------------------+   +----------------------------+
 ```
 
@@ -86,142 +91,142 @@
 
 ```
 SEWorld/
-├── backend/                     # Spring Boot 3.4.3 Backend Application
-│   ├── documentation/           # API specs, guides, and tutorials
-│   │   ├── api_documentation.md # Detailed REST endpoint documentation
-│   │   └── tutorial.md          # Setup guides
-│   ├── gradle/                  # Gradle wrapper binaries & configuration
+├── backend/                     # Spring Boot 3.4.3 REST API (Java 21)
+│   ├── documentation/
+│   │   └── api_documentation.md # REST endpoint reference
+│   ├── gradle/wrapper/          # Gradle wrapper
 │   ├── src/
-│   │   ├── main/java/           # Application controllers, services, models, security
-│   │   ├── main/resources/      # application.yml and runtime properties
-│   │   └── test/java/           # JUnit 5 & Zonky Embedded Postgres tests
-│   ├── build.gradle             # Build script, dependencies, and Jacoco config
-│   ├── Dockerfile               # Multi-stage Docker build for backend service
-│   ├── docker-compose.yml       # Docker orchestration (PostgreSQL, Ollama, App)
-│   ├── sonar-project.properties # SonarQube quality configuration
-│   └── README.md                # Backend-specific documentation
-├── frontend/                    # Vue 3 + Vite Frontend Application
-│   ├── public/                  # Static assets & SVG logos
+│   │   ├── main/java/           # Controllers, services, entities, repositories, security
+│   │   ├── main/resources/      # application.yml
+│   │   └── test/java/           # JUnit 5 tests (embedded PostgreSQL)
+│   ├── build.gradle             # Dependencies, Jacoco, Spotless
+│   ├── Dockerfile               # Multi-stage image build
+│   ├── docker-compose.yml       # PostgreSQL + Ollama + backend
+│   ├── sonar-project.properties # SonarQube config (used by the course GitLab CI)
+│   ├── .gitlab-ci.yml           # Original course GitLab pipeline
+│   └── README.md                # Backend documentation
+├── frontend/                    # Vue 3 + Vite single-page application
+│   ├── public/                  # Logos (SEW_black.svg, SEW_white.svg)
 │   ├── src/
-│   │   ├── assets/              # Global styles, color palettes, CSS
-│   │   ├── components/          # Reusable Vue components, modals, cards, charts
-│   │   ├── router/              # Vue Router configuration and auth navigation guards
-│   │   ├── services/            # API communication services
-│   │   ├── stores/              # Pinia state management stores
-│   │   ├── utils/               # Constants, route definitions, helpers
-│   │   ├── views/               # Page views (Topics, Exercises, Attempts, AI, Stats)
-│   │   ├── App.vue              # Main Vue application component
-│   │   └── main.js              # Application entrypoint
-│   ├── index.html               # Vite HTML entrypoint
-│   ├── package.json             # NPM dependencies and development scripts
-│   ├── vite.config.js           # Vite configuration & backend proxy setup
-│   └── README.md                # Frontend-specific documentation
-├── batches/                     # User stories, requirements, and validation PDFs
-└── README.md                    # Root project documentation (this file)
+│   │   ├── assets/              # Global CSS and images
+│   │   ├── components/          # Reusable components (cards, buttons, popups, questions, charts)
+│   │   ├── router/              # Routes and authentication guard
+│   │   ├── services/            # Shared reactive services
+│   │   ├── stores/              # Pinia stores
+│   │   ├── utils/               # API route constants and helpers
+│   │   ├── views/               # Pages
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js           # Plugins and /api proxy
+│   ├── .gitlab-ci.yml           # Original course GitLab pipeline
+│   └── README.md                # Frontend documentation
+├── batches/                     # Sprint deliverables (PDF)
+│   ├── batch_1/                 # Sprint 1: user stories, validation report
+│   ├── batch_2/                 # Sprint 2: user stories, quality requirements, validation report
+│   └── batch_3/                 # Sprint 3: user stories
+└── README.md                    # This file
 ```
+
+> The `.gitlab-ci.yml` files come from the course's GitLab instance, where the project was developed. They do not run on GitHub.
 
 ---
 
-## Quick Start Guide
+## Quick Start
 
 ### Prerequisites
 
-Ensure you have the following software installed on your machine:
-- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/) (v2+)
-- [Node.js](https://nodejs.org/) (v18.x or v20.x LTS)
-- [Yarn](https://yarnpkg.com/) (v1.22+)
-- *(Optional for local backend development)*: [Java Development Kit (JDK) 21](https://adoptium.net/)
+- [Docker](https://docs.docker.com/get-docker/) with Docker Compose v2
+- [Node.js](https://nodejs.org/) 20 or 22 LTS
+- [Yarn](https://classic.yarnpkg.com/) 1.22+
+- *(Only for running the backend outside Docker)* [JDK 21](https://adoptium.net/)
+- About 5 GB of free disk space for the `deepseek-llm` model
 
----
+> [!IMPORTANT]
+> Login uses USI's SWITCH edu-ID test realm (see [Authentication](#authentication)). Without a USI account you can build and start the whole stack, but you won't be able to log in.
 
-### Option A: Containerized Backend + Local Frontend (Recommended)
+### Option A: Backend in Docker + Local Frontend (Recommended)
 
-This mode runs the entire backend stack (Database, Ollama AI, and Spring Boot API) in Docker, while running the frontend locally with Vite hot-reloading.
+Docker runs PostgreSQL, Ollama and the Spring Boot API. The frontend runs locally with hot reload.
 
-#### 1. Start the Backend Infrastructure
+**1. Start the backend stack**
+
 ```bash
 cd backend
-docker-compose up --build -d
+docker compose up --build -d
 ```
-> [!NOTE]
-> On the first run, the Ollama container will automatically download the `deepseek-llm` model. This may take a few minutes depending on your internet connection. Check the logs with `docker logs -f SA4-Ollama`.
-> The backend API will be available at `http://localhost:8080`.
 
-#### 2. Start the Frontend Development Server
-In a new terminal window:
+On the first run, the Ollama container downloads `deepseek-llm`, which can take several minutes. Follow it with `docker logs -f SA4-Ollama`. The API is then available at `http://localhost:8080`.
+
+To keep the logs in the foreground, leave out `-d`.
+
+**2. Start the frontend** (in a second terminal)
+
 ```bash
 cd frontend
 yarn install
 yarn dev
 ```
-Open your browser and navigate to `http://localhost:3000`.
 
----
+Open `http://localhost:3000`.
 
 ### Option B: Full Local Development
 
-If you are developing Java code in an IDE (e.g., IntelliJ IDEA) and want fast compilation without rebuilding the container:
+Use this when working on Java code in an IDE (e.g. IntelliJ IDEA), so you don't have to rebuild the container after every change.
 
-#### 1. Start only the Database and Ollama AI containers
 ```bash
+# 1. Only database and AI engine in Docker
 cd backend
-docker-compose up -d postgres ollama
-```
+docker compose up -d postgres ollama
 
-#### 2. Run the Spring Boot Application locally
-```bash
-cd backend
+# 2. Run the API with Gradle
 ./gradlew bootRun
-```
 
-#### 3. Run the Frontend locally
-```bash
-cd frontend
+# 3. Frontend (separate terminal)
+cd ../frontend
 yarn install
 yarn dev
 ```
 
----
+### Stopping the Stack
 
-### Option C: Fully Containerized Backend via Docker
-
-To run the complete backend stack in the foreground and follow container logs:
 ```bash
 cd backend
-docker-compose up --build
-```
-To stop the services:
-```bash
-docker-compose down
+docker compose down          # stop the containers
+docker compose down -v       # stop them and also delete the database and model volumes
 ```
 
 ---
 
 ## Default Ports and Services
 
-| Service | Container Name | Host Address | Description |
-|:---|:---|:---|:---|
-| **Frontend UI** | *(Host Process)* | `http://localhost:3000` | Vue 3 Single Page Application |
-| **Backend REST API** | `SA4-Backend` | `http://localhost:8080` | Spring Boot 3.4.3 Application |
-| **PostgreSQL Database** | `SA4-Postgres` | `localhost:5432` | PostgreSQL 17 Database (`users_tutorial_lab02`) |
-| **Ollama AI Engine** | `SA4-Ollama` | `localhost:11434` | Ollama server running `deepseek-llm` |
+| Service         | Container         | Address                  | Description                       |
+|:----------------|:------------------|:-------------------------|:----------------------------------|
+| **Frontend**    | *(local process)* | `http://localhost:3000`  | Vue 3 SPA (Vite dev server)       |
+| **Backend API** | `SA4-Backend`     | `http://localhost:8080`  | Spring Boot application           |
+| **PostgreSQL**  | `SA4-Postgres`    | `localhost:5432`         | Database `users_tutorial_lab02`   |
+| **Ollama**      | `SA4-Ollama`      | `http://localhost:11434` | LLM server running `deepseek-llm` |
 
 ---
 
-## Authentication Flow
+## Authentication
 
-Authentication is integrated with **SWITCH Edu-ID** via OAuth2 / OpenID Connect:
-1. When you access protected pages on the frontend (`http://localhost:3000`), unauthenticated users are directed to `/login`.
-2. Clicking **Log In** triggers a redirect to the backend OAuth2 endpoint:  
-   `http://localhost:8080/oauth2/authorization/switch-edu-id`
-3. The backend delegates authentication to the SWITCH Edu-ID Keycloak realm (`https://auth.dev.si.usi.ch/auth/realms/simurbs`).
-4. Upon successful login, Spring Security redirects back to the frontend (`http://localhost:3000/topics`).
-5. Frontend requests include session credentials (`credentials: 'include'`) and query `GET /api/auth/me` to determine user identity and role (`STUDENT` or `INSTRUCTOR`).
+Authentication uses **OAuth2 / OpenID Connect** with USI's **SWITCH edu-ID** Keycloak test realm (`https://auth.dev.si.usi.ch/auth/realms/simurbs`), which the course provided.
+
+1. The frontend router checks `GET /api/auth/me` before every page. If you are not logged in, it sends you to `/login`.
+2. **Log In** redirects to `http://localhost:8080/oauth2/authorization/switch-edu-id`.
+3. The backend sends you to the SWITCH edu-ID realm to sign in.
+4. After you sign in, Spring Security redirects you to `http://localhost:3000/topics`.
+5. From then on, requests send the session cookie (`credentials: 'include'`). `GET /api/auth/me` returns your identity and role: `STUDENT` or `INSTRUCTOR`.
+
+> [!WARNING]
+> The realm and its OAuth client (`test-client`) belong to USI's course infrastructure, so outside that environment login fails. To run SEWorld elsewhere, register your own OpenID Connect provider (for example, a local Keycloak) in `backend/src/main/resources/application.yml`.
 
 ---
 
-## Submodule Documentation
+## Further Documentation
 
-For in-depth architecture, API endpoints, test instructions, and contribution guidelines, see:
-- [Backend README](./backend/README.md) & [API Documentation](./backend/documentation/api_documentation.md)
-- [Frontend README](./frontend/README.md)
+- [Backend README](./backend/README.md): tech stack, configuration, tests, code quality
+- [API Documentation](./backend/documentation/api_documentation.md): every REST endpoint, with examples
+- [Frontend README](./frontend/README.md): views, stores, routing, build

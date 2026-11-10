@@ -1,104 +1,120 @@
-# SEWorld Backend
+# SEWorld – Backend
 
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://www.oracle.com/java/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue.svg)](https://www.postgresql.org/)
-[![Spring AI](https://img.shields.io/badge/Spring%20AI-1.0.0--M6-green.svg)](https://spring.io/projects/spring-ai)
-[![Ollama](https://img.shields.io/badge/Ollama-deepseek--llm-black.svg)](https://ollama.ai/)
-[![Spotless](https://img.shields.io/badge/Code%20Style-Spotless%20%28Google%20Java%29-blueviolet.svg)](https://github.com/diffplug/spotless)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4.3-6db33f.svg)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://adoptium.net/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791.svg)](https://www.postgresql.org/)
+[![Spring AI](https://img.shields.io/badge/Spring%20AI-1.0.0--M6-6db33f.svg)](https://spring.io/projects/spring-ai)
+[![Ollama](https://img.shields.io/badge/Ollama-deepseek--llm-black.svg)](https://ollama.com/)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Google%20Java%20Format-blueviolet.svg)](https://github.com/diffplug/spotless)
 
-The backend service for **SEWorld** is a high-performance RESTful API built with **Spring Boot 3.4.3** and **Java 21**. It manages educational topics, learning materials, multi-format exercises, automated feedback scoring, role-based user management, and AI tutoring workflows powered by **Spring AI** and a local **Ollama** model (`deepseek-llm`).
+The backend of **SEWorld** is a REST API built with **Spring Boot 3.4.3** and **Java 21**. It handles topics, learning materials, exercises and automatic grading, role-based access for students and instructors, and the AI tutoring features. The AI features use **Spring AI** with a local **Ollama** model (`deepseek-llm`).
+
+> Part of the SEWorld university project (USI, SA4 2025). See the [root README](../README.md) for the overview, quick start and team.
 
 ---
 
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
-- [Core Features & Modules](#core-features--modules)
-- [Architecture & Design](#architecture--design)
+- [Core Features](#core-features)
+- [Architecture](#architecture)
 - [API Conventions](#api-conventions)
 - [Running the Backend](#running-the-backend)
   - [Method 1: Docker Compose (Recommended)](#method-1-docker-compose-recommended)
   - [Method 2: Hybrid Local Development](#method-2-hybrid-local-development)
-- [Configuration & Environment Variables](#configuration--environment-variables)
-- [Testing & Quality Assurance](#testing--quality-assurance)
-  - [Running Tests](#running-tests)
-  - [Code Coverage (Jacoco)](#code-coverage-jacoco)
-  - [Code Formatting (Spotless)](#code-formatting-spotless)
-  - [SonarQube Integration](#sonarqube-integration)
-- [Project Directory Layout](#project-directory-layout)
+- [Configuration](#configuration)
+- [Testing & Code Quality](#testing--code-quality)
+- [Project Layout](#project-layout)
 
 ---
 
 ## Tech Stack
 
-- **Runtime & Language:** Java 21 (JDK 21)
-- **Framework:** Spring Boot 3.4.3
-- **Database & Persistence:** PostgreSQL 17, Spring Data JPA, Hibernate ORM
-- **Security:** Spring Security, OAuth2 Client, OAuth2 Resource Server (JWT verification with SWITCH Edu-ID)
-- **AI Framework:** Spring AI (`1.0.0-M6`) with Ollama Starter (`deepseek-llm` model)
-- **Build & Dependency Management:** Gradle 8.5 with Gradle Wrapper
-- **Testing Tools:** JUnit 5, Mockito, Zonky Embedded PostgreSQL (`io.zonky.test:embedded-postgres`)
-- **Code Quality:** Spotless (Google Java Format), Jacoco, SonarQube
+| Area               | Technology                                                                  |
+|:-------------------|:----------------------------------------------------------------------------|
+| Language & runtime | Java 21                                                                     |
+| Framework          | Spring Boot 3.4.3 (Web, Validation)                                         |
+| Persistence        | PostgreSQL 17, Spring Data JPA, Hibernate                                   |
+| Security           | Spring Security, OAuth2 Client, OAuth2 Resource Server (JWT), SWITCH edu-ID |
+| AI                 | Spring AI `1.0.0-M6` + Ollama (`deepseek-llm`, temperature 0.3)             |
+| Build              | Gradle 8.5 (wrapper included)                                               |
+| Testing            | JUnit 5, Mockito, Spring Security Test, Zonky Embedded PostgreSQL           |
+| Code quality       | Spotless (Google Java Format), Jacoco, SonarQube (course CI)                |
 
 ---
 
-## Core Features & Modules
+## Core Features
 
-### 1. Topic & Material Management
-- **Topic Hierarchy:** Manage curricular topics with completion tracking per student.
-- **Learning Materials:** Support for external links and uploaded multimedia/documents (PDFs, slides, source code, text files) with a maximum request file size of 20MB.
-- **Material Endpoints:** Upload, download, edit metadata, and delete materials (restricted to instructors).
+### 1. Topics & Materials
 
-### 2. Exercise & Question Engine
-- **Question Types:**
-  - `MultiChoiceQuestion`: Multiple choice questions with configurable correct options.
-  - `TrueFalseQuestion`: Binary true/false verification questions.
-  - `ShortAnswerQuestion`: Open-ended short text responses.
-- **Variants Support:** Questions can have alternative variants to prevent memorization and assess core understanding.
-- **Lifecycle Management:** Exercises can be drafted, edited, previewed, and published by instructors.
+- Course topics, with completion tracked for each student.
+- Materials can be external links or uploaded files (PDF, slides, source code, text, and more), up to **20 MB** per request.
+- Instructors can upload, download, edit and delete materials.
 
-### 3. Attempts & Automated Feedback
-- **Student Attempts:** Students can take and re-attempt published exercises.
-- **Grading & Scoring:** Real-time answer scoring and evaluation upon attempt submission.
-- **Detailed Feedback:** Comprehensive attempt summaries detailing question-by-question performance.
+### 2. Exercises & Questions
 
-### 4. AI-Augmented Tutoring & Workflows
-- **Ollama Integration:** Seamlessly interfaces with a local Ollama instance running `deepseek-llm`.
-- **Material Q&A:** Students can ask AI-powered questions directly contextualized to learning materials (`/api/auth/AI/ask/materials/{material_did}`).
-- **Exercise Explanations:** Automated generation of explanations for why a student's answer was correct or incorrect.
-- **AI Question Variant Generation:** Instructors can request AI-generated question variants for existing exercises.
-- **AI Evaluation Pipeline:** Instructors can review, approve (`accept_evaluation`), or reject (`deny_evaluation`) AI-generated content before publishing.
+- Three question types:
+  - `MultiChoiceQuestion`: one or more correct options
+  - `TrueFalseQuestion`: true/false statements
+  - `ShortAnswerQuestion`: free-text answers
+- **Variants:** a question can have alternative versions, which makes memorizing answers harder.
+- **Lifecycle:** instructors create exercises as drafts, edit and preview them, then publish.
+- `QuestionServiceRegistry` sends each question to the service for its type.
 
-### 5. Analytics & Statistics
-- **Student View:** Topic completion percentages, historical attempt grades, and graphical performance metrics.
-- **Instructor View:** Aggregate exercise difficulty, class average scores, and cohort performance distributions.
+### 3. Attempts & Feedback
+
+- Students can attempt a published exercise more than once.
+- Answers are graded when the attempt is submitted.
+- Feedback shows the result for each question, with explanations.
+
+### 4. AI Features
+
+- **Material Q&A:** students ask questions about a specific material (`POST /api/auth/AI/ask/materials/{material_did}`).
+- **Answer explanations:** the AI explains why an answer is right or wrong.
+- **Question variant generation:** instructors can have the AI generate new variants of a question.
+- **Review workflow:** instructors accept or reject AI-generated content (`accept_evaluation` / `deny_evaluation`) before students can see it.
+- **Ratings & comments:** students and instructors can rate AI responses and comment on them.
+
+### 5. Statistics
+
+- **Students:** completion per topic, grade history, performance charts.
+- **Instructors:** difficulty of each question, class averages, results per topic and per exercise.
 
 ---
 
-## Architecture & Design
+## Architecture
+
+The code follows the classic layered layout: controllers call services, and services use repositories.
 
 ```
- ch.usi.inf.bsc.sa4.lab02spring
- ├── configuration/    # SecurityConfiguration (OAuth2/JWT), CorsConfig (CORS for localhost:3000)
- ├── controller/       # REST Controllers (@RequestMapping("/api/auth/..."))
- │   └── dto/          # Data Transfer Objects for input/output payloads
- ├── model/            # JPA Entities (User, Topic, Material, Exercise, Question, Attempt, AIResponse)
- ├── repository/       # Spring Data JPA Repositories & Specifications
- ├── service/          # Business logic, QuestionServiceRegistry, AI services
- ├── response/         # Standardized ResponseHandler utility
- └── utils/            # Helper utilities and role authorization checkers
+ch.usi.inf.bsc.sa4.lab02spring
+├── configuration/   # SecurityConfiguration (OAuth2 + JWT), CorsConfig
+├── controller/      # REST controllers under /api/auth/**
+│   └── dto/         # Request/response DTOs and projections
+├── exception/       # GlobalExceptionHandler
+├── model/           # JPA entities (users, topics, materials, exercises, questions, attempts, AI responses)
+├── repository/      # Spring Data JPA repositories and Specifications
+├── response/        # ResponseHandler: uniform JSON envelope
+├── service/         # Business logic, QuestionServiceRegistry, AI services
+└── utils/           # User and role-check helpers
 ```
+
+> The package name `lab02spring` comes from the course's lab template the project started from.
 
 ### Security & CORS
-- **CORS:** Configured in `CorsConfig.java` to allow requests from `http://localhost:3000` with HTTP methods (`GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`, `PATCH`) and credential forwarding (`allowCredentials: true`).
-- **OAuth2 Authentication:** Configured in `SecurityConfiguration.java` using SWITCH Edu-ID Keycloak realm (`https://auth.dev.si.usi.ch/auth/realms/simurbs`). Protected endpoints require authentication (`/api/auth/**`).
+
+- **Authentication:** `SecurityConfiguration` configures OAuth2 login against the SWITCH edu-ID realm `https://auth.dev.si.usi.ch/auth/realms/simurbs`, and validates JWTs as a resource server. All `/api/auth/**` endpoints require authentication, while `/api/public/**` is open to everyone.
+- **CORS:** `CorsConfig` allows `http://localhost:3000` to call `/api/**` with `GET, POST, PUT, PATCH, DELETE, OPTIONS` and credentials.
+- After login, users are redirected to `http://localhost:3000/topics`.
+
+> [!WARNING]
+> The OAuth client (`test-client`) and realm are USI test infrastructure. Outside USI, configure your own OpenID Connect provider under `spring.security.oauth2` in `application.yml`.
 
 ---
 
 ## API Conventions
 
-All API responses follow a uniform JSON structure defined by `ResponseHandler`:
+Every endpoint returns the same JSON envelope, built by `ResponseHandler`:
 
 ```json
 {
@@ -110,140 +126,140 @@ All API responses follow a uniform JSON structure defined by `ResponseHandler`:
 }
 ```
 
-For complete endpoint documentation, path parameters, and request/response examples, refer to [api_documentation.md](./documentation/api_documentation.md).
+The full endpoint reference, with parameters and examples, is in **[documentation/api_documentation.md](./documentation/api_documentation.md)**.
 
 ---
 
 ## Running the Backend
 
+All commands run from the `backend/` directory.
+
 ### Method 1: Docker Compose (Recommended)
 
-This starts the entire backend infrastructure including PostgreSQL, Ollama (with automatic `deepseek-llm` pull), and the Spring Boot application container.
+This starts PostgreSQL, Ollama (which downloads `deepseek-llm` on its first run) and the Spring Boot app:
 
 ```bash
-docker-compose up --build
-```
-Or run in detached mode:
-```bash
-docker-compose up --build -d
+docker compose up --build        # logs in the foreground
+docker compose up --build -d     # in the background
 ```
 
-#### Containers Started:
-1. **`SA4-Postgres`** (Port `5432`): PostgreSQL 17 database instance.
-2. **`SA4-Ollama`** (Port `11434`): Ollama inference server (automatically pulls `deepseek-llm` on first startup).
-3. **`SA4-Backend`** (Port `8080`): Spring Boot application built from the local `Dockerfile`.
+| Container      | Port    | Role                                      |
+|:---------------|:--------|:------------------------------------------|
+| `SA4-Postgres` | `5432`  | PostgreSQL 17                             |
+| `SA4-Ollama`   | `11434` | Ollama server (`deepseek-llm`)            |
+| `SA4-Backend`  | `8080`  | Spring Boot API (built from `Dockerfile`) |
 
----
+To follow the model download, run `docker logs -f SA4-Ollama`. To stop everything, run `docker compose down` (add `-v` to also delete the data volumes).
 
 ### Method 2: Hybrid Local Development
 
-For active Java development with an IDE (e.g., IntelliJ IDEA, Eclipse, VS Code), run only the dependent services in Docker and run the Spring Boot app directly via Gradle:
+This runs only the database and Ollama in Docker, and the API from your IDE or Gradle:
 
-1. **Start Database and AI Engine:**
-   ```bash
-   docker-compose up -d postgres ollama
-   ```
+```bash
+docker compose up -d postgres ollama
+docker ps                 # check that both containers are running
+./gradlew bootRun
+```
 
-2. **Verify Containers are Running:**
-   ```bash
-   docker ps
-   ```
-
-3. **Run the Spring Boot Application:**
-   ```bash
-   ./gradlew bootRun
-   ```
-
-The application will connect to the local Dockerized Postgres on port `5432` and Ollama on port `11434`.
+The app connects to `localhost:5432` (PostgreSQL) and `localhost:11434` (Ollama).
 
 ---
 
-## Configuration & Environment Variables
+## Configuration
 
-Default values are specified in `src/main/resources/application.yml` and can be overridden via environment variables:
+`src/main/resources/application.yml` contains the configuration. You can override any value with an environment variable:
 
-| Environment Variable | Default Value | Description |
-|:---|:---|:---|
-| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/users_tutorial_lab02` | PostgreSQL JDBC connection URL |
-| `SPRING_DATASOURCE_USERNAME` | `power_rangers` | PostgreSQL username |
-| `SPRING_DATASOURCE_PASSWORD` | `<sa4_project_password>` | PostgreSQL password |
-| `SPRING_AI_OLLAMA_BASE-URL` | `http://localhost:11434` | Ollama API base URL |
+| Environment variable         | Default                                                 | Description       |
+|:-----------------------------|:--------------------------------------------------------|:------------------|
+| `SPRING_DATASOURCE_URL`      | `jdbc:postgresql://localhost:5432/users_tutorial_lab02` | JDBC URL          |
+| `SPRING_DATASOURCE_USERNAME` | `power_rangers`                                         | Database user     |
+| `SPRING_DATASOURCE_PASSWORD` | *(see `docker-compose.yml`)*                            | Database password |
+| `SPRING_AI_OLLAMA_BASE_URL`  | `http://localhost:11434`                                | Ollama base URL   |
 
-### Other Notable Properties
-- **Multipart Upload Size:** Max file size and request size are set to `20MB` (`spring.servlet.multipart.max-file-size=20MB`).
-- **JPA DDL Auto:** Set to `update` (`spring.jpa.hibernate.ddl-auto=update`) for automatic schema synchronizations.
-- **AI Model:** Set to `deepseek-llm` with temperature `0.3`.
+> [!CAUTION]
+> The database credentials in `docker-compose.yml` and `application.yml` are development values from the course. Never reuse them for a deployment that other people can reach. Supply your own values through environment variables or an untracked `.env` file.
+
+Other settings:
+
+- **Upload limit:** `spring.servlet.multipart.max-file-size` and `max-request-size` are both `20MB`.
+- **Schema:** `spring.jpa.hibernate.ddl-auto=update`, so Hibernate creates and updates tables automatically.
+- **AI model:** `deepseek-llm`, temperature `0.3`.
+- **Logging:** Spring Security logs at `DEBUG` level. Lower it outside development.
 
 ---
 
-## Testing & Quality Assurance
+## Testing & Code Quality
 
-### Running Tests
-The backend uses **Zonky Embedded PostgreSQL** (`io.zonky.test:embedded-postgres`), allowing all integration tests to run with a real, embedded PostgreSQL instance without requiring an external database running.
+### Tests
 
-To execute the test suite:
+The suite has about **300 tests**: unit tests for models and services, and MockMvc tests for controllers. They use **Zonky Embedded PostgreSQL**, so no external database is needed:
+
 ```bash
 ./gradlew test
 ```
 
-### Code Coverage (Jacoco)
-Jacoco is configured to automatically generate an XML coverage report after test execution:
+### Coverage (Jacoco)
+
+A coverage report is generated automatically after `test`. To run it on its own:
+
 ```bash
 ./gradlew jacocoTestReport
 ```
-The report is saved to:
-`build/reports/jacoco/test/jacocoTestReport.xml`
 
-### Code Formatting (Spotless)
-The project enforces Google Java Format via Spotless.
+The XML report is written to `build/reports/jacoco/test/jacocoTestReport.xml`.
 
-Check formatting compliance:
+### Formatting (Spotless)
+
+The code is formatted with Google Java Format:
+
 ```bash
-./gradlew spotlessCheck
+./gradlew spotlessCheck   # check formatting
+./gradlew spotlessApply   # fix formatting
 ```
 
-Automatically apply formatting fixes:
+### Javadoc
+
 ```bash
-./gradlew spotlessApply
+./gradlew javadoc         # output: build/docs/javadoc
 ```
 
-### SonarQube Integration
-Static analysis and quality gates can be triggered using the configuration in `sonar-project.properties`:
-```bash
-./gradlew sonar
-```
+### SonarQube
+
+Static analysis ran in the course's GitLab pipeline (`.gitlab-ci.yml`) against USI's SonarQube instance. `sonar-project.properties` reads the project key and name from GitLab CI variables, so it won't work in a local checkout without that environment.
 
 ---
 
-## Project Directory Layout
+## Project Layout
 
 ```
 backend/
 ├── documentation/
-│   ├── api_documentation.md      # Detailed REST API endpoint specifications
-│   └── tutorial.md               # Additional developer setup guide
-├── gradle/wrapper/               # Gradle wrapper executable binaries
+│   └── api_documentation.md        # REST API reference
+├── gradle/wrapper/                 # Gradle wrapper
 ├── src/
 │   ├── main/
 │   │   ├── java/ch/usi/inf/bsc/sa4/lab02spring/
-│   │   │   ├── configuration/    # Security and WebMvc CORS configuration
-│   │   │   ├── controller/       # REST API controllers and DTOs
-│   │   │   ├── exception/        # Global exception handling
-│   │   │   ├── model/            # JPA entities (Users, Topics, Exercises, etc.)
-│   │   │   ├── repository/       # Spring Data JPA repositories & specifications
-│   │   │   ├── response/         # Generic response envelope
-│   │   │   ├── service/          # Business logic services
-│   │   │   └── utils/            # Role checkers, JWT test utilities
+│   │   │   ├── configuration/      # Security and CORS
+│   │   │   ├── controller/         # REST controllers
+│   │   │   │   └── dto/            # DTOs
+│   │   │   ├── exception/          # Global exception handling
+│   │   │   ├── model/              # JPA entities
+│   │   │   ├── repository/         # Repositories and specifications
+│   │   │   ├── response/           # Response envelope
+│   │   │   ├── service/            # Business logic
+│   │   │   └── utils/              # User / role helpers
 │   │   └── resources/
-│   │       └── application.yml   # Spring application configuration
+│   │       └── application.yml
 │   └── test/
 │       └── java/ch/usi/inf/bsc/sa4/lab02spring/
-│           ├── controller/       # MockMvc controller tests
-│           ├── model/            # Domain model unit tests
-│           └── service/          # Service layer unit and integration tests
-├── Dockerfile                    # Multi-stage production container build
-├── docker-compose.yml            # Docker orchestration file
-├── build.gradle                  # Gradle dependencies and tasks
-├── settings.gradle               # Gradle project settings
-└── sonar-project.properties      # SonarQube configuration
+│           ├── controller/         # MockMvc controller tests
+│           ├── model/              # Entity unit tests
+│           ├── service/            # Service tests
+│           └── utils/              # Test helpers (JwtTestUtil)
+├── .gitlab-ci.yml                  # Course GitLab pipeline (build, test, quality)
+├── Dockerfile                      # Multi-stage image build
+├── docker-compose.yml              # PostgreSQL + Ollama + backend
+├── build.gradle
+├── settings.gradle
+└── sonar-project.properties
 ```
